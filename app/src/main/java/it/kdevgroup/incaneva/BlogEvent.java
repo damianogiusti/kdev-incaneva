@@ -27,7 +27,7 @@ public class BlogEvent {
     private String postTitle;
     private String postContent;
     private String categoryName;
-    //    private String categoryLink;
+    private String categoryLink;
     private List<String> eventType;
     private String imageLink;
     private long startTime;
@@ -43,6 +43,7 @@ public class BlogEvent {
                      String postTitle,
                      String postContent,
                      String categoryName,
+                     String categoryLink,
                      List<String> eventType,
                      String imageLink,
                      long startTime,
@@ -54,6 +55,7 @@ public class BlogEvent {
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.categoryName = categoryName;
+        this.categoryLink=categoryLink;
         this.eventType = eventType;
         this.imageLink = imageLink;
         this.startTime = startTime;
@@ -90,6 +92,10 @@ public class BlogEvent {
         return eventType;
     }
 
+    public String getCategoryLink() {
+        return categoryLink;
+    }
+
     public String getImageLink() {
         return imageLink;
     }
@@ -108,6 +114,10 @@ public class BlogEvent {
 
     public void setID(int ID) {
         this.ID = ID;
+    }
+
+    public void setCategoryLink(String categoryLink){
+        this.categoryLink=categoryLink;
     }
 
     public void setBlogName(String blogName) {
