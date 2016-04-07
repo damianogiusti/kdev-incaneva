@@ -162,7 +162,7 @@ public class HomeActivity extends AppCompatActivity
                         filteredList.add(event);
                 }
                 cardsAdapter = new EventsCardsAdapter(filteredList);    //senza librerie esterne bisogna rifare l'adapter
-                recyclerView.setAdapter(cardsAdapter);                  //non funziona lo stesso dio cane
+                recyclerView.setAdapter(cardsAdapter);                  //non funziona lo stesso
                 break;
             case R.id.history_events:
                 for(BlogEvent event: blogEventList){
