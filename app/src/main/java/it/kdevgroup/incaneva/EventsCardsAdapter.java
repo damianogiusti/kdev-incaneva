@@ -42,7 +42,7 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
         cardsHolder.postTitle.setText(events.get(position).getPostTitle());
-        cardsHolder.postContent.setText(events.get(position).getPostContent());
+        cardsHolder.postContent.setText(events.get(position).getPostContent().substring(0,130)+"...");
     }
 
     @Override
