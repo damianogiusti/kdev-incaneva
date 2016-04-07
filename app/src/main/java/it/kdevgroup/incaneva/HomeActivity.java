@@ -44,9 +44,19 @@ public class HomeActivity extends AppCompatActivity
 
         //LISTA PER TESTING
         events = new ArrayList<>();
-        events.add(new BlogEvent("Nome blog 1", "Titolo post 1", "Contenuto post 1"));
-        events.add(new BlogEvent("Nome blog 2", "Titolo post 2", "Contenuto post 2"));
-        events.add(new BlogEvent("Nome blog 3", "Titolo post 3", "Contenuto post 3"));
+        BlogEvent t = new BlogEvent();
+        t.setBlogName("Nome blog 1");
+        t.setPostTitle("Titolo post 1");
+        t.setPostContent("Contenuto post 1");
+        events.add(t);
+        t.setBlogName("Nome blog 2");
+        t.setPostTitle("Titolo post 2");
+        t.setPostContent("Contenuto post 2");
+        events.add(t);
+        t.setBlogName("Nome blog 3");
+        t.setPostTitle("Titolo post 3");
+        t.setPostContent("Contenuto post 3");
+        events.add(t);
 
         cardsAdapter = new EventsCardsAdapter(events);  //adapter personalizzato che accetta la lista di eventi
                                                         //si occuperà di popolare N cards con N eventi
@@ -69,7 +79,6 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         txtProva = (TextView) findViewById(R.id.textView);
 
