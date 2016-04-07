@@ -27,7 +27,6 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "HomeActivity";
-    private TextView txtProva;
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
 
@@ -82,8 +81,6 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        txtProva = (TextView) findViewById(R.id.textView);
 
         // ESEMPIO DI CHIAMATA
         ApiCallSingleton.getInstance().doCall("6,8", null, null, null, null, new AsyncHttpResponseHandler() {
