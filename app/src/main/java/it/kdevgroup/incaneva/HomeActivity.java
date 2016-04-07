@@ -12,25 +12,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.w3c.dom.Text;
+
+import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static final String API_URL = "http://incaneva.it/wp-admin/admin-ajax.php";
+
+    private TextView txtProva;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -40,6 +54,67 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        txtProva = (TextView) findViewById(R.id.textView);
+
+        apiCall("6,8", "false", null, null, null);
+    }
+
+    private void apiCall(String blogValue,
+                         String oldValue,
+                         String limitValue,
+                         String offsetValue,
+                         String filterValue) {
+
+        final String action = "action";
+        final String actionValue = "incaneva_events";
+        final String blog = "blog";
+        final String old = "old";
+        final String limit = "limit";
+        final String offset = "offset";
+        final String filter = "filter";
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.add(action, actionValue);
+        requestParams.add(blog, blogValue);
+
+        if (oldValue != null) {
+            requestParams.add(old, oldValue);
+        }
+
+        if (limitValue != null) {
+            requestParams.add(limit, limitValue);
+        }
+
+        if (offsetValue != null) {
+            requestParams.add(offset, offsetValue);
+        }
+
+        if (filterValue != null) {
+            requestParams.add(filter, filterValue);
+        }
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.post(API_URL, requestParams, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                txtProva.setText(new String(responseBody));
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                txtProva.setText("Chiamo....");
+                // TODO
+            }
+        });
+
     }
 
     @Override
