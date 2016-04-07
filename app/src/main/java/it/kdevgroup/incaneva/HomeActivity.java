@@ -14,12 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import java.util.List;
-
 import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
@@ -153,6 +148,19 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
         List<BlogEvent> filteredList = new ArrayList<>();
 
+/*
+        if (id == R.id.nav_events) {
+            // Handle the camera action
+        } else if (id == R.id.nav_nature) {
+
+        } else if (id == R.id.nav_culture) {
+
+        } else if (id == R.id.nav_food) {
+
+        } else if (id == R.id.nav_sport) {
+
+        } else if (id == R.id.nav_passion) {
+*/
         switch(id){     //creazione lista temporanea in base al filtro da reinserire nell'adapter
             case R.id.all_events:
                 break;
