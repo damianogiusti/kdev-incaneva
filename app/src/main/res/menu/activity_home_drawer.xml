@@ -3,27 +3,27 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/all_events"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Eventi" />
+            android:title="Tutti" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nature_events"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Natura" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/history_events"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="Storia e cultura" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/food_events"
             android:icon="@drawable/ic_menu_manage"
             android:title="Enogastronomia" />
         <item
-            android:id="@+id/nav_share"
+            android:id="@+id/sport_events"
             android:icon="@drawable/ic_menu_share"
             android:title="Sport" />
         <item
-            android:id="@+id/nav_send"
+            android:id="@+id/passions_events"
             android:icon="@drawable/ic_menu_send"
             android:title="Passioni" />
     </group>
