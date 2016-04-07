@@ -19,11 +19,14 @@ public class ApiCallSingleton {
     public static final String API_URL = "http://incaneva.it/wp-admin/admin-ajax.php";
     private static final String TAG = "ApiCallSingleton";
 
-    private static ApiCallSingleton ourInstance = new ApiCallSingleton();
+    private static ApiCallSingleton ourInstance = null;
 
     private String result;
 
     public static ApiCallSingleton getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new ApiCallSingleton();
+        }
         return ourInstance;
     }
 
@@ -84,6 +87,7 @@ public class ApiCallSingleton {
 
     /**
      * Valida il responso passato per parametro
+     *
      * @param response stringa che contiene il responso
      * @return la stringa con il responso o null se c'è un errore
      * @throws Exception
