@@ -32,13 +32,17 @@ public class JSONParser {
 
     public List<BlogEvent> parseJson(){
         JSONObject jsnobject = new JSONObject(jsonBody);
-        JSONArray jsonArray = jsnobject.getJSONArray("locations");
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject explrObject = jsonArray.getJSONObject(i);
-            }catch (Exception e){
-                Log.d("Cazzo: ", "Non va");
+        try {
+            JSONArray jsonArray = jsnobject.getJSONArray("locations");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                try {
+                    JSONObject explrObject = jsonArray.getJSONObject(i);
+                } catch (Exception e) {
+                    Log.d("Cazzo: ", "Non carica il JSON Object");
+                }
             }
+        }catch (Exception e){
+            Log.d("Cazzo: ", "non carica il JSON Array");
         }
     }
 }
