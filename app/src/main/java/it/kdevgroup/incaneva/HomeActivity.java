@@ -149,6 +149,7 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+<<<<<<< HEAD
         if (id == R.id.nav_events) {
             // Handle the camera action
         } else if (id == R.id.nav_nature) {
@@ -160,7 +161,29 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_sport) {
 
         } else if (id == R.id.nav_passion) {
+=======
+        switch(id){     //creazione lista temporanea in base al filtro da reinserire nell'adapter
+            case R.id.all_events:
 
+                break;
+            case R.id.nature_events:
+
+                break;
+            case R.id.history_events:
+
+                break;
+            case R.id.food_events:
+
+                break;
+            case R.id.sport_events:
+>>>>>>> 258023acae459336a0adf0fda5cb43153ac519c7
+
+                break;
+            case R.id.passions_events:
+
+                break;
+            default:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
