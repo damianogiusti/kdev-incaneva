@@ -39,6 +39,13 @@ public class HomeActivity extends AppCompatActivity
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
 
+        /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
+        //Tocheck if  recycler is on bottom
+        if(layoutManager.lastCompletelyVisibleItemPosition()==data.size()-1){
+            //Its at bottom ..
+        }
+        */
+
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
