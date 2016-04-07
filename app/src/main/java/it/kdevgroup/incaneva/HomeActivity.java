@@ -68,7 +68,6 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 // TODO: parsing JSON
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
