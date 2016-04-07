@@ -153,18 +153,27 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch(id){     //creazione lista temporanea in base al filtro da reinserire nell'adapter
+            case R.id.all_events:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nature_events:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.history_events:
 
-        } else if (id == R.id.nav_share) {
+                break;
+            case R.id.food_events:
 
-        } else if (id == R.id.nav_send) {
+                break;
+            case R.id.sport_events:
 
+                break;
+            case R.id.passions_events:
+
+                break;
+            default:
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
