@@ -21,7 +21,7 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     }
 
     /**
-     *  chiamato quando il recycler view ha bisogno di una card per mostrare un evento
+     * Chiamato quando il recycler view ha bisogno di una card per mostrare un evento
      * @param viewGroup view padre di ogni carta (recyclerview in teoria)
      * @param viewType  tipo della view che sarà popolata (CardView)
      * @return oggetto CardViewHolder definito alla fine che setterà i vari TextView presenti nella CardView
@@ -34,9 +34,9 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     }
 
     /**
-     *  setta i dati nella card
+     * Setta i dati nella card
      * @param cardsHolder CardViewHolder restituito dal metodo precedente
-     * @param position  posizione di un evento nella lista
+     * @param position posizione di un evento nella lista
      */
     @Override
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
@@ -56,7 +56,7 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     }
 
     /**
-     * "contenitore" di ogni card
+     * "Contenitore" di ogni card
      */
     public static class CardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
