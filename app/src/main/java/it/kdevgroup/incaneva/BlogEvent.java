@@ -1,5 +1,7 @@
 package it.kdevgroup.incaneva;
 
+import android.text.Spanned;
+
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public class BlogEvent {
     private String blogName;
     private String blogNameSlug;
     private String postTitle;
-    private String postContent;
+    private Spanned postContent;
     private String categoryName;
     private String categoryLink;
     private List<String> eventType;
@@ -41,7 +43,7 @@ public class BlogEvent {
                      String blogName,
                      String blogNameSlug,
                      String postTitle,
-                     String postContent,
+                     Spanned postContent,
                      String categoryName,
                      String categoryLink,
                      List<String> eventType,
@@ -80,7 +82,7 @@ public class BlogEvent {
         return postTitle;
     }
 
-    public String getPostContent() {
+    public Spanned getPostContent() {
         return postContent;
     }
 
@@ -132,7 +134,7 @@ public class BlogEvent {
         this.postTitle = postTitle;
     }
 
-    public void setPostContent(String postContent) {
+    public void setPostContent(Spanned postContent) {
         this.postContent = postContent;
     }
 

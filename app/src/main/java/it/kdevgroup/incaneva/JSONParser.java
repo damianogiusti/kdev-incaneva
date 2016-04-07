@@ -70,7 +70,7 @@ public class JSONParser {
         blogEvent.setBlogNameSlug(obj.getString(BlogEvent.KEY_blogname_slug));
         blogEvent.setID(obj.getInt(BlogEvent.KEY_id));
         blogEvent.setPostTitle(obj.getString(BlogEvent.KEY_post_title));
-        blogEvent.setPostContent(Html.fromHtml(obj.getString(BlogEvent.KEY_post_content)).toString());
+        blogEvent.setPostContent(Html.fromHtml(obj.getString(BlogEvent.KEY_post_content)));
         //blogEvent.setPostContent(Html.escapeHtml(obj.getString(BlogEvent.KEY_post_content)));
         blogEvent.setCategoryName(obj.getString(BlogEvent.KEY_category_name));
         blogEvent.setCategoryLink(obj.getString(BlogEvent.KEY_category_link));
