@@ -3,53 +3,28 @@
 
     <group android:checkableBehavior="single">
         <item
-<<<<<<< HEAD
-            android:id="@+id/nav_events"
-            android:icon="@drawable/ic_menu_events"
-            android:title="Eventi" />
+            android:id="@+id/nav_all"
+            android:icon="@drawable/ic_filter_all"
+            android:title="Tutti" />
         <item
             android:id="@+id/nav_nature"
-            android:icon="@drawable/ic_menu_pets"
+            android:icon="@drawable/ic_filter_nature"
             android:title="Natura" />
         <item
             android:id="@+id/nav_culture"
-            android:icon="@drawable/ic_menu_history"
+            android:icon="@drawable/ic_filter_culture"
             android:title="Storia e cultura" />
         <item
             android:id="@+id/nav_food"
-            android:icon="@drawable/ic_menu_enog"
+            android:icon="@drawable/ic_filter_food"
             android:title="Enogastronomia" />
         <item
             android:id="@+id/nav_sport"
-            android:icon="@drawable/ic_menu_sport"
+            android:icon="@drawable/ic_filter_sport"
             android:title="Sport" />
         <item
-            android:id="@+id/nav_passion"
-            android:icon="@drawable/ic_menu_passion"
-=======
-            android:id="@+id/all_events"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Tutti" />
-        <item
-            android:id="@+id/nature_events"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Natura" />
-        <item
-            android:id="@+id/history_events"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Storia e cultura" />
-        <item
-            android:id="@+id/food_events"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Enogastronomia" />
-        <item
-            android:id="@+id/sport_events"
-            android:icon="@drawable/ic_menu_share"
-            android:title="Sport" />
-        <item
-            android:id="@+id/passions_events"
-            android:icon="@drawable/ic_menu_send"
->>>>>>> 258023acae459336a0adf0fda5cb43153ac519c7
+            android:id="@+id/nav_passions"
+            android:icon="@drawable/ic_filter_passions"
             android:title="Passioni" />
     </group>
 

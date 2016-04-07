@@ -12,8 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import java.util.ArrayList;
 import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
@@ -162,9 +162,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_passion) {
 */
         switch(id){     //creazione lista temporanea in base al filtro da reinserire nell'adapter
-            case R.id.all_events:
+            case R.id.nav_all:
                 break;
-            case R.id.nature_events:
+            case R.id.nav_nature:
                 for(BlogEvent event: blogEventList){            //foreach per filtrare senza effettuare di nuovo la connessione
                     if(event.getCategoryName().contains("natura"))
                         filteredList.add(event);
@@ -172,7 +172,7 @@ public class HomeActivity extends AppCompatActivity
                 cardsAdapter = new EventsCardsAdapter(filteredList);    //senza librerie esterne bisogna rifare l'adapter
                 recyclerView.setAdapter(cardsAdapter);                  //non funziona lo stesso
                 break;
-            case R.id.history_events:
+            case R.id.nav_culture:
                 for(BlogEvent event: blogEventList){
                     if(event.getCategoryName().contains("storia"))
                         filteredList.add(event);
@@ -180,7 +180,7 @@ public class HomeActivity extends AppCompatActivity
                 cardsAdapter = new EventsCardsAdapter(filteredList);
                 recyclerView.setAdapter(cardsAdapter);
                 break;
-            case R.id.food_events:
+            case R.id.nav_food:
                 for(BlogEvent event: blogEventList){
                     if(event.getCategoryName().contains("enogastronomia"))
                         filteredList.add(event);
@@ -188,7 +188,7 @@ public class HomeActivity extends AppCompatActivity
                 cardsAdapter = new EventsCardsAdapter(filteredList);
                 recyclerView.setAdapter(cardsAdapter);
                 break;
-            case R.id.sport_events:
+            case R.id.nav_sport:
                 for(BlogEvent event: blogEventList){
                     if(event.getCategoryName().contains("sport"))
                         filteredList.add(event);
@@ -196,7 +196,7 @@ public class HomeActivity extends AppCompatActivity
                 cardsAdapter = new EventsCardsAdapter(filteredList);
                 recyclerView.setAdapter(cardsAdapter);
                 break;
-            case R.id.passions_events:
+            case R.id.nav_passions:
                 for(BlogEvent event: blogEventList){
                     if(event.getCategoryName().contains("passioni"))
                         filteredList.add(event);
