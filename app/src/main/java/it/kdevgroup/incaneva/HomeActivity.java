@@ -3,6 +3,7 @@ package it.kdevgroup.incaneva;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +19,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import cz.msebera.android.httpclient.Header;
@@ -25,7 +27,7 @@ import cz.msebera.android.httpclient.Header;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    private static final String TAG = "HomeActivity";
     private TextView txtProva;
 
     @Override
@@ -57,7 +59,34 @@ public class HomeActivity extends AppCompatActivity
 
         txtProva = (TextView) findViewById(R.id.textView);
 
-        txtProva.setText(ApiCallSingleton.getInstance().doCall("6,8", null, null, null, null));
+        // ESEMPIO DI CHIAMATA
+        ApiCallSingleton.getInstance().doCall("6,8", null, null, null, null, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
+                            if (response != null) {
+                                // TODO: parsing JSON
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        error.printStackTrace();
+                    }
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                    }
+                }
+        );
+
     }
 
     @Override

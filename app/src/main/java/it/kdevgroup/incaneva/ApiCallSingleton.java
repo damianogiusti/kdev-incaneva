@@ -41,11 +41,12 @@ public class ApiCallSingleton {
      * @param filterValue
      * @return <b>String</b> risultato <br>null se la chiamata non ha prodotto risultati
      */
-    public String doCall(String blogValue,
-                         String oldValue,
-                         String limitValue,
-                         String offsetValue,
-                         String filterValue) {
+    public void doCall(String blogValue,
+                       String oldValue,
+                       String limitValue,
+                       String offsetValue,
+                       String filterValue,
+                       AsyncHttpResponseHandler handler) {
 
         final String action = "action";
         final String actionValue = "incaneva_events";
@@ -77,35 +78,26 @@ public class ApiCallSingleton {
         }
 
         AsyncHttpClient client = new AsyncHttpClient();
-        client.post(API_URL, requestParams, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try {
-                    JSONObject object = new JSONObject(new String(responseBody));
-                    boolean success = object.getBoolean("success");
-                    if (success) {
-                        result = new String(responseBody);
-                    } else {
-                        Log.e(TAG, "onSuccess: " + object.getString("errorMessage"));
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                error.printStackTrace();
-            }
-
-            @Override
-            public void onStart() {
-                super.onStart();
-            }
-        });
+        client.post(API_URL, requestParams, handler);
 
     }
 
+    /**
+     * Valida il responso passato per parametro
+     * @param response stringa che contiene il responso
+     * @return la stringa con il responso o null se c'è un errore
+     * @throws Exception
+     */
+    public String validateResponse(String response) throws Exception {
+        JSONObject object = new JSONObject(response);
+        boolean success = object.getBoolean("success");
+        if (success) {
+            return response;
+        } else {
+            Log.e(TAG, "onSuccess: " + object.getString("errorMessage"));
+            return null;
+        }
+    }
 
 
 }
