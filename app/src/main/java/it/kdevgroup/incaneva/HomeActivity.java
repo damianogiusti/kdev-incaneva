@@ -25,7 +25,6 @@ import cz.msebera.android.httpclient.Header;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String API_URL = "http://incaneva.it/wp-admin/admin-ajax.php";
 
     private TextView txtProva;
 
@@ -58,63 +57,7 @@ public class HomeActivity extends AppCompatActivity
 
         txtProva = (TextView) findViewById(R.id.textView);
 
-        apiCall("6,8", "false", null, null, null);
-    }
-
-    private void apiCall(String blogValue,
-                         String oldValue,
-                         String limitValue,
-                         String offsetValue,
-                         String filterValue) {
-
-        final String action = "action";
-        final String actionValue = "incaneva_events";
-        final String blog = "blog";
-        final String old = "old";
-        final String limit = "limit";
-        final String offset = "offset";
-        final String filter = "filter";
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.add(action, actionValue);
-        requestParams.add(blog, blogValue);
-
-        if (oldValue != null) {
-            requestParams.add(old, oldValue);
-        }
-
-        if (limitValue != null) {
-            requestParams.add(limit, limitValue);
-        }
-
-        if (offsetValue != null) {
-            requestParams.add(offset, offsetValue);
-        }
-
-        if (filterValue != null) {
-            requestParams.add(filter, filterValue);
-        }
-
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.post(API_URL, requestParams, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                txtProva.setText(new String(responseBody));
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-            }
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                txtProva.setText("Chiamo....");
-                // TODO
-            }
-        });
-
+        txtProva.setText(ApiCallSingleton.getInstance().doCall("6,8", null, null, null, null));
     }
 
     @Override
