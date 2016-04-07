@@ -5,7 +5,7 @@
     android:gravity="bottom"
     android:orientation="vertical"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:background="@drawable/side_nav_bar"
+    android:background="#ffffff"
     android:paddingRight="@dimen/abc_dropdownitem_text_padding_right"
     android:paddingLeft="@dimen/abc_dropdownitem_text_padding_left"
     android:paddingBottom="@dimen/nav_header_vertical_spacing"
