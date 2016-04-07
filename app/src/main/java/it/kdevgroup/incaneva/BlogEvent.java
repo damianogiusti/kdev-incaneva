@@ -6,6 +6,21 @@ import java.util.List;
  * Created by andrea on 07/04/16.
  */
 public class BlogEvent {
+
+    public static final String KEY_blogname = "blogname";
+    public static final String KEY_blogname_slug = "blogname_slug";
+    public static final String KEY_id = "ID";
+    public static final String KEY_post_title = "post_title";
+    public static final String KEY_post_content = "post_content";
+    public static final String KEY_category_name = "category_name";
+    public static final String KEY_category_link = "category_link";
+    public static final String KEY_event_type = "event_type";
+    public static final String KEY_post_thumbnail = "post_thumbnail";
+    public static final String KEY_evcal_srow = "evcal_srow";
+    public static final String KEY_evcal_erow = "evcal_erow";
+    public static final String KEY_evcal_event_color = "evcal_event_color";
+
+
     private int ID;
     private String blogName;
     private String blogNameSlug;
