@@ -29,8 +29,7 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card, viewGroup, false);
-        CardViewHolder cardsHolder = new CardViewHolder(v);
-        return cardsHolder;
+        return new CardViewHolder(v);
     }
 
     /**
@@ -42,10 +41,10 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
         cardsHolder.postTitle.setText(events.get(position).getPostTitle());
-        //cardsHolder.postContent.setText(events.get(position).getPostContent().substring(0,130)+"...");
-        //TODO
-//        anteprima se lunghezza < di quanto voglio io non subsequence
-        cardsHolder.postContent.setText(events.get(position).getPostContent());
+        if(events.get(position).getPostContent().length() < 130)
+            cardsHolder.postContent.setText(events.get(position).getPostContent());
+        else
+            cardsHolder.postContent.setText(events.get(position).getPostContent().subSequence(0,130)+"...");
     }
 
     @Override

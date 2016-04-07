@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import java.util.ArrayList;
 import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
@@ -39,24 +38,6 @@ public class HomeActivity extends AppCompatActivity
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
-/*
-        //LISTA PER TESTING
-        events = new ArrayList<>();
-        BlogEvent t = new BlogEvent();
-        t.setBlogName("Nome blog 1");
-        t.setPostTitle("Titolo post 1");
-        t.setPostContent("Contenuto post 1");
-        events.add(t);
-        t.setBlogName("Nome blog 2");
-        t.setPostTitle("Titolo post 2");
-        t.setPostContent("Contenuto post 2");
-        events.add(t);
-        t.setBlogName("Nome blog 3");
-        t.setPostTitle("Titolo post 3");
-        t.setPostContent("Contenuto post 3");
-        events.add(t);
-*/
-        
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -67,17 +48,26 @@ public class HomeActivity extends AppCompatActivity
 //            }
 //        });
 
+        getEventsFromServer("6,8","true","33",null,null);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        if(drawer != null)
+            drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        if(navigationView != null)
+            navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
+    public void getEventsFromServer(String blogs, String old, String limit, String offset, String eventFilter){
 
         // ESEMPIO DI CHIAMATA
-        ApiCallSingleton.getInstance().doCall("6,8", "true", "33", null, null, new AsyncHttpResponseHandler() {
+        ApiCallSingleton.getInstance().doCall(blogs, old, limit, offset, eventFilter, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
@@ -85,9 +75,8 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                cardsAdapter = new EventsCardsAdapter(blogEventList);  //adapter personalizzato che accetta la lista di eventi
-                                                        //si occuperà di popolare N cards con N eventi
-                                recyclerView.setAdapter(cardsAdapter);          //l'adapter restituirà le cards popolate alla view
+                                cardsAdapter = new EventsCardsAdapter(blogEventList);   //adapter personalizzato che accetta la lista di eventi
+                                recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -106,13 +95,12 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
         );
-
     }
 
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -146,70 +134,33 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        List<BlogEvent> filteredList = new ArrayList<>();
 
-/*
-        if (id == R.id.nav_events) {
-            // Handle the camera action
-        } else if (id == R.id.nav_nature) {
-
-        } else if (id == R.id.nav_culture) {
-
-        } else if (id == R.id.nav_food) {
-
-        } else if (id == R.id.nav_sport) {
-
-        } else if (id == R.id.nav_passion) {
-*/
-        switch(id){     //creazione lista temporanea in base al filtro da reinserire nell'adapter
+        switch(id){
             case R.id.nav_all:
+                //TODO chiamata default
                 break;
             case R.id.nav_nature:
-                for(BlogEvent event: blogEventList){            //foreach per filtrare senza effettuare di nuovo la connessione
-                    if(event.getCategoryName().contains("natura"))
-                        filteredList.add(event);
-                }
-                cardsAdapter = new EventsCardsAdapter(filteredList);    //senza librerie esterne bisogna rifare l'adapter
-                recyclerView.setAdapter(cardsAdapter);                  //non funziona lo stesso
+                //TODO filtro "natura"
                 break;
             case R.id.nav_culture:
-                for(BlogEvent event: blogEventList){
-                    if(event.getCategoryName().contains("storia"))
-                        filteredList.add(event);
-                }
-                cardsAdapter = new EventsCardsAdapter(filteredList);
-                recyclerView.setAdapter(cardsAdapter);
+                //TODO filtro "storia"
                 break;
             case R.id.nav_food:
-                for(BlogEvent event: blogEventList){
-                    if(event.getCategoryName().contains("enogastronomia"))
-                        filteredList.add(event);
-                }
-                cardsAdapter = new EventsCardsAdapter(filteredList);
-                recyclerView.setAdapter(cardsAdapter);
+                //TODO filtro "enogastronomia"
                 break;
             case R.id.nav_sport:
-                for(BlogEvent event: blogEventList){
-                    if(event.getCategoryName().contains("sport"))
-                        filteredList.add(event);
-                }
-                cardsAdapter = new EventsCardsAdapter(filteredList);
-                recyclerView.setAdapter(cardsAdapter);
+                //TODO filtro "sport"
                 break;
             case R.id.nav_passions:
-                for(BlogEvent event: blogEventList){
-                    if(event.getCategoryName().contains("passioni"))
-                        filteredList.add(event);
-                }
-                cardsAdapter = new EventsCardsAdapter(filteredList);
-                recyclerView.setAdapter(cardsAdapter);
+                //TODO filtro "passioni"
                 break;
             default:
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        if(drawer != null)
+            drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }
