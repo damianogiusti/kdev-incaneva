@@ -12,12 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import java.util.List;
 
@@ -153,17 +149,17 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_events) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_nature) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_culture) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_food) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_sport) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_passion) {
 
         }
 
