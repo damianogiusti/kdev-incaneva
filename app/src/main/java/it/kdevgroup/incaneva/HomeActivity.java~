@@ -9,7 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -28,12 +27,14 @@ public class HomeActivity extends AppCompatActivity
 
     private static final String TAG = "HomeActivity";
     private TextView txtProva;
-
+<<<<<<< Updated upstream
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
-
+    private List<BlogEvent> events;  //lista di eventi
     private EventsCardsAdapter cardsAdapter;
 
+=======
     private List<BlogEvent> blogEventList;
+>>>>>>> Stashed changes
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class HomeActivity extends AppCompatActivity
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
-/*
+
         //LISTA PER TESTING
         events = new ArrayList<>();
         BlogEvent t = new BlogEvent();
@@ -62,8 +63,10 @@ public class HomeActivity extends AppCompatActivity
         t.setPostTitle("Titolo post 3");
         t.setPostContent("Contenuto post 3");
         events.add(t);
-*/
-        
+
+        cardsAdapter = new EventsCardsAdapter(events);  //adapter personalizzato che accetta la lista di eventi
+                                                        //si occuperà di popolare N cards con N eventi
+        recyclerView.setAdapter(cardsAdapter);          //l'adapter restituirà le cards popolate alla view
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -94,9 +97,6 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                cardsAdapter = new EventsCardsAdapter(blogEventList);  //adapter personalizzato che accetta la lista di eventi
-                                                        //si occuperà di popolare N cards con N eventi
-                                recyclerView.setAdapter(cardsAdapter);          //l'adapter restituirà le cards popolate alla view
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
