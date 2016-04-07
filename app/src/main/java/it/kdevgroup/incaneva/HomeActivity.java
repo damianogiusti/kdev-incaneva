@@ -1,10 +1,8 @@
 package it.kdevgroup.incaneva;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,12 +13,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
-import org.json.JSONObject;
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -29,6 +25,10 @@ public class HomeActivity extends AppCompatActivity
 
     private static final String TAG = "HomeActivity";
     private TextView txtProva;
+    private RecyclerView recyclerView;  //recycler view che conterrà le carte
+    private List<BlogEvent> events;  //lista di eventi
+    private EventsCardsAdapter cardsAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,20 @@ public class HomeActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
+        recyclerView.setLayoutManager(linearRecyclerManager);
+
+        //LISTA PER TESTING
+        events = new ArrayList<>();
+        events.add(new BlogEvent("Nome blog 1", "Titolo post 1", "Contenuto post 1"));
+        events.add(new BlogEvent("Nome blog 2", "Titolo post 2", "Contenuto post 2"));
+        events.add(new BlogEvent("Nome blog 3", "Titolo post 3", "Contenuto post 3"));
+
+        cardsAdapter = new EventsCardsAdapter(events);  //adapter personalizzato che accetta la lista di eventi
+                                                        //si occuperà di popolare N cards con N eventi
+        recyclerView.setAdapter(cardsAdapter);          //l'adapter restituirà le cards popolate alla view
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
