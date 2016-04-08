@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                cardsAdapter = new EventsCardsAdapter(blogEventList);   //adapter personalizzato che accetta la lista di eventi
+                                cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
                                 recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
                             }
                         } catch (Exception e) {
