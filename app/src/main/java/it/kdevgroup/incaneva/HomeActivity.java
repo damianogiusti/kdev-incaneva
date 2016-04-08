@@ -70,23 +70,24 @@ public class HomeActivity extends AppCompatActivity
 //            }
 //        });
 
-        if(!isNetworkAvailable()){
-            Snackbar.make(recyclerView, "Internet Assente", Snackbar.LENGTH_LONG).show();
+        if (!isNetworkAvailable()) {
+            Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+        } else {
+
+            getEventsFromServer("6,8", "true", "33", null, null);
+            currentSection = R.id.nav_all;
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            if (drawer != null)
+                drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+            if (navigationView != null)
+                navigationView.setNavigationItemSelectedListener(this);
         }
-
-        getEventsFromServer("6,8", "true", "33", null, null);
-        currentSection = R.id.nav_all;
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        if (drawer != null)
-            drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null)
-            navigationView.setNavigationItemSelectedListener(this);
 
     }
 
@@ -103,7 +104,7 @@ public class HomeActivity extends AppCompatActivity
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
                                 showEvents(blogEventList);
-                                }
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -125,9 +126,10 @@ public class HomeActivity extends AppCompatActivity
 
     /**
      * Aggiorna la lista degli eventi
+     *
      * @param events List<> di eventi da mostrare
      */
-    public void showEvents(List<BlogEvent> events){
+    public void showEvents(List<BlogEvent> events) {
         cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
         recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
@@ -172,36 +174,54 @@ public class HomeActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_all:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_all) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
                     currentSection = R.id.nav_all;
                 }
                 break;
             case R.id.nav_nature:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_nature) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
                     currentSection = R.id.nav_nature;
                 }
                 break;
             case R.id.nav_culture:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_culture) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
                     currentSection = R.id.nav_culture;
                 }
                 break;
             case R.id.nav_food:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_food) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
                     currentSection = R.id.nav_food;
                 }
                 break;
             case R.id.nav_sport:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_sport) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
                     currentSection = R.id.nav_sport;
                 }
                 break;
             case R.id.nav_passions:
+                if (!isNetworkAvailable()) {
+                    Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
+                }
                 if (currentSection != R.id.nav_passions) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
                     currentSection = R.id.nav_passions;
