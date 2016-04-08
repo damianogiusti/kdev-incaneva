@@ -203,6 +203,7 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
+    //Metodo che controlla la possibilità di accedere a internet
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
