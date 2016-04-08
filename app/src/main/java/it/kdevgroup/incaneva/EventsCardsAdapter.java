@@ -1,17 +1,22 @@
 package it.kdevgroup.incaneva;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 /**
@@ -50,6 +55,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     @Override
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
+        // carico l'immagine
         Picasso.with(ctx)
                 .load(events.get(position).getImageLink())
                 .fit()
@@ -59,6 +65,14 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             cardsHolder.postContent.setText(events.get(position).getPostContent());
         else
             cardsHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
+
+        cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
+        cardsHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO
+            }
+        });
     }
 
     @Override
@@ -71,10 +85,10 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         return events.size();
     }
 
-    public void insertItems(List<BlogEvent> eventsToInsert){
+    public void insertItems(List<BlogEvent> eventsToInsert) {
         //svuotamento iniziale della lista di eventi già presenti
         Iterator<BlogEvent> it = events.iterator();
-        while(it.hasNext()){
+        while (it.hasNext()) {
             it.next();
             notifyItemRemoved(events.indexOf(it));
             it.remove();
@@ -98,6 +112,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView postTitle;
         TextView postContent;
         ImageView postImage;
+        Button btnShowMore;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -106,6 +121,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             postTitle = (TextView) itemView.findViewById(R.id.postTitle);
             postContent = (TextView) itemView.findViewById(R.id.postContent);
             postImage = (ImageView) itemView.findViewById(R.id.postImage);
+            btnShowMore = (Button) itemView.findViewById(R.id.btnMoreInfo);
         }
     }
 
