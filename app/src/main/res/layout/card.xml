@@ -38,15 +38,19 @@
                 android:shadowRadius="2"
                 android:text="asdasdasd"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                android:textSize="25dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/postImage">
+                android:layout_below="@+id/postImage"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="2dp">
 
                 <!--<TextView-->
                 <!--android:id="@+id/blogName"-->
@@ -60,15 +64,17 @@
                     android:id="@+id/blogName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="Il più fico della città" />
+                    android:layout_marginBottom="8dp"
+                    android:text="Il più fico della città"
+                    android:textSize="10dp" />
 
                 <TextView
                     android:id="@+id/postContent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:text="Il più fico della città" />
+                    android:layout_marginBottom="8dp"
+                    android:text="Il più fico della città"
+                    android:textSize="12dp" />
 
                 <Button
                     android:id="@+id/btnMoreInfo"
