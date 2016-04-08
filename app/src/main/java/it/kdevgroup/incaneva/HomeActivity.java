@@ -207,8 +207,8 @@ public class HomeActivity extends AppCompatActivity
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
                 } else {
-                  /*  Snackbar.make(recyclerView, "Cibo", Snackbar.LENGTH_SHORT);
-                }*/
+                  //  Snackbar.make(recyclerView, "Cibo", Snackbar.LENGTH_SHORT);
+                }
                 if (currentSection != R.id.nav_food) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
                     currentSection = R.id.nav_food;
