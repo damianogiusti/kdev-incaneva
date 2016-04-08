@@ -51,6 +51,8 @@ public class HomeActivity extends AppCompatActivity
 
         blogEventList = new ArrayList<>();
 
+        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
+        recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
         //Tocheck if  recycler is on bottom
@@ -100,10 +102,8 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                //showEvents(blogEventList);
-                                cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
-                                recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
-                            }
+                                showEvents(blogEventList);
+                                }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -123,8 +123,13 @@ public class HomeActivity extends AppCompatActivity
         );
     }
 
+    /**
+     * Aggiorna la lista degli eventi
+     * @param events List<> di eventi da mostrare
+     */
     public void showEvents(List<BlogEvent> events){
-        cardsAdapter.insertItems(events);
+        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
+        recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
 
     @Override
