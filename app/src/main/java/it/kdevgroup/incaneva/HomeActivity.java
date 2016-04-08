@@ -1,5 +1,8 @@
 package it.kdevgroup.incaneva;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -59,6 +63,10 @@ public class HomeActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+        if(!isNetworkAvailable()){
+            Snackbar.make(recyclerView, "Internet Assente", Snackbar.LENGTH_LONG).show();
+        }
 
         getEventsFromServer("6,8", "true", "33", null, null);
         currentSection = R.id.nav_all;
@@ -193,5 +201,12 @@ public class HomeActivity extends AppCompatActivity
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
