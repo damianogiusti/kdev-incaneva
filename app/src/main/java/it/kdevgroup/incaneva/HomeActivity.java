@@ -20,6 +20,7 @@ import android.view.View;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -47,6 +48,9 @@ public class HomeActivity extends AppCompatActivity
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
+
+        blogEventList = new ArrayList<>();
+
 
         /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
         //Tocheck if  recycler is on bottom
@@ -96,6 +100,7 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
+                                //showEvents(blogEventList);
                                 cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
                                 recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
                             }
@@ -116,6 +121,10 @@ public class HomeActivity extends AppCompatActivity
                     }
                 }
         );
+    }
+
+    public void showEvents(List<BlogEvent> events){
+        cardsAdapter.insertItems(events);
     }
 
     @Override
