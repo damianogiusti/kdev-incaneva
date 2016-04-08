@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,6 +58,24 @@ public class EventsCardsAdapter  extends RecyclerView.Adapter<EventsCardsAdapter
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    public void insertItems(List<BlogEvent> eventsToInsert){
+        //svuotamento iniziale della lista di eventi già presenti
+        Iterator<BlogEvent> it = events.iterator();
+        while(it.hasNext()){
+            it.next();
+            notifyItemRemoved(events.indexOf(it));
+            it.remove();
+        }
+        it = eventsToInsert.iterator();
+        //inserimento dei nuovi elementi ottenuti con il filtro
+        /*
+        while(it.hasNext()){
+            it.next();
+            notifyItemRemoved(events.indexOf(it));
+        }
+        */
     }
 
     /**
