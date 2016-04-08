@@ -1,5 +1,8 @@
 package it.kdevgroup.incaneva;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -65,6 +69,10 @@ public class HomeActivity extends AppCompatActivity
 //            }
 //        });
 
+        if(!isNetworkAvailable()){
+            Snackbar.make(recyclerView, "Internet Assente", Snackbar.LENGTH_LONG).show();
+        }
+
         getEventsFromServer("6,8", "true", "33", null, null);
         currentSection = R.id.nav_all;
 
@@ -93,7 +101,12 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
+<<<<<<< HEAD
                                 showEvents(blogEventList);
+=======
+                                cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
+                                recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
+>>>>>>> master
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -201,5 +214,13 @@ public class HomeActivity extends AppCompatActivity
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    //Metodo che controlla la possibilità di accedere a internet
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

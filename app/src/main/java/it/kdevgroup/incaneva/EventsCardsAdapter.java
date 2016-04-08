@@ -1,13 +1,17 @@
 package it.kdevgroup.incaneva;
 
+import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Iterator;
+import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
@@ -17,9 +21,11 @@ import java.util.List;
 public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.CardViewHolder> {
 
     private List<BlogEvent> events;  //lista di eventi
+    private Context ctx;
 
-    public EventsCardsAdapter(List<BlogEvent> events) {
+    public EventsCardsAdapter(List<BlogEvent> events, Context ctx) {
         this.events = events;
+        this.ctx = ctx;
     }
 
     /**
@@ -44,6 +50,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     @Override
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
+        Picasso.with(ctx).load(events.get(position).getImageLink()).into(cardsHolder.postImage);
         cardsHolder.postTitle.setText(events.get(position).getPostTitle());
         if (events.get(position).getPostContent().length() < 130)
             cardsHolder.postContent.setText(events.get(position).getPostContent());
@@ -87,6 +94,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView blogName;
         TextView postTitle;
         TextView postContent;
+        ImageView postImage;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -94,6 +102,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             blogName = (TextView) itemView.findViewById(R.id.blogName);
             postTitle = (TextView) itemView.findViewById(R.id.postTitle);
             postContent = (TextView) itemView.findViewById(R.id.postContent);
+            postImage = (ImageView) itemView.findViewById(R.id.postImage);
         }
     }
 
