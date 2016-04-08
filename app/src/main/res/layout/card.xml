@@ -22,8 +22,6 @@
                 android:layout_height="100dp"
                 android:contentDescription="Prova"
                 android:gravity="bottom"
-                android:padding="10dp"
-                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#000" />
 
             <TextView
@@ -33,7 +31,13 @@
                 android:layout_alignBottom="@+id/postImage"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
+                android:padding="10dp"
+                android:shadowColor="@android:color/background_dark"
+                android:shadowDx="3"
+                android:shadowDy="3"
+                android:shadowRadius="2"
                 android:text="asdasdasd"
+                android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#fff" />
 
             <LinearLayout
