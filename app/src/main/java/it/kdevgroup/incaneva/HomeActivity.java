@@ -12,8 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import java.util.List;
+
 import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
@@ -35,7 +38,7 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
 
@@ -55,23 +58,23 @@ public class HomeActivity extends AppCompatActivity
 //            }
 //        });
 
-        getEventsFromServer("6,8","true","33",null,null);
+        getEventsFromServer("6,8", "true", "33", null, null);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        if(drawer != null)
+        if (drawer != null)
             drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if(navigationView != null)
+        if (navigationView != null)
             navigationView.setNavigationItemSelectedListener(this);
 
     }
 
     //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
-    public void getEventsFromServer(String blogs, String old, String limit, String offset, String eventFilter){
+    public void getEventsFromServer(String blogs, String old, String limit, String offset, String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
         ApiCallSingleton.getInstance().doCall(blogs, old, limit, offset, eventFilter, new AsyncHttpResponseHandler() {
@@ -142,9 +145,10 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        switch(id){
+        switch (id) {
             case R.id.nav_all:
                 //TODO chiamata default
+
                 break;
             case R.id.nav_nature:
                 //TODO filtro "natura"
@@ -166,7 +170,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if(drawer != null)
+        if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
         return true;
     }
