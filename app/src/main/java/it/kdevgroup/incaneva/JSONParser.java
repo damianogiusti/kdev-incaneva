@@ -18,7 +18,6 @@ import java.util.Map;
 public class JSONParser {
 
     private static JSONParser ourInstance = null;
-
     private final Map<String, String> colori = new HashMap<>();
     public static final String DATA = "data";
 

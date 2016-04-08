@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -92,7 +93,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
-    public void getEventsFromServer(String blogs, String old, String limit, String offset, String eventFilter) {
+    public void getEventsFromServer(String blogs, String old, String limit, String offset, final String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
         ApiCallSingleton.getInstance().doCall(blogs, old, limit, offset, eventFilter, new AsyncHttpResponseHandler() {
@@ -103,7 +104,7 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                showEvents(blogEventList);
+                                showEvents(blogEventList, eventFilter);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -129,8 +130,9 @@ public class HomeActivity extends AppCompatActivity
      *
      * @param events List<> di eventi da mostrare
      */
-    public void showEvents(List<BlogEvent> events) {
+    public void showEvents(List<BlogEvent> events, String eventFilter) {
         cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
+        cardsAdapter.setFilter(eventFilter);
         recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
 

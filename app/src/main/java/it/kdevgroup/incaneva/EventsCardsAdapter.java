@@ -27,6 +27,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
 
     private List<BlogEvent> events;  //lista di eventi
     private Context ctx;
+    private String filter;
 
     public EventsCardsAdapter(List<BlogEvent> events, Context ctx) {
         this.events = events;
@@ -73,6 +74,20 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
                 // TODO
             }
         });
+    }
+
+    //setta il colore dell'evento in base al filtro
+    public void setEventColor(CardViewHolder cardsHolder, int position){
+        if(filter == null){
+            cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
+        }
+        else {
+
+        }
+    }
+
+    public void setFilter(String filter){
+        this.filter = filter;
     }
 
     @Override
