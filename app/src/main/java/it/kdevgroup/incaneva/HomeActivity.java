@@ -27,19 +27,18 @@ public class HomeActivity extends AppCompatActivity
     private static final String TAG = "HomeActivity";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
-
     private EventsCardsAdapter cardsAdapter;
-
     private List<BlogEvent> blogEventList;
-
     private int currentSection;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
