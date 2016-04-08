@@ -38,7 +38,6 @@ public class HomeActivity extends AppCompatActivity
     private int currentSection;
     private Snackbar internetConnection;
 
-
     private Toolbar toolbar;
 
     @Override
@@ -97,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
-    public void getEventsFromServer(String blogs, String old, String limit, String offset, final String eventFilter) {
+    public void getEventsFromServer(final String blogs, final String old, final String limit, final String offset, final String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
         ApiCallSingleton.getInstance().doCall(blogs, old, limit, offset, eventFilter, new AsyncHttpResponseHandler() {
@@ -119,6 +118,8 @@ public class HomeActivity extends AppCompatActivity
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
                         error.printStackTrace();
+                        getEventsFromServer(blogs, old, limit, offset, eventFilter);
+                        Snackbar.make(recyclerView, "Problema di connessione al server", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
