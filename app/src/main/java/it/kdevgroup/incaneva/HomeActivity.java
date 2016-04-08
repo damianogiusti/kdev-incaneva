@@ -1,6 +1,7 @@
 package it.kdevgroup.incaneva;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
@@ -29,6 +30,8 @@ public class HomeActivity extends AppCompatActivity
     private EventsCardsAdapter cardsAdapter;
 
     private List<BlogEvent> blogEventList;
+
+    private int currentSection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class HomeActivity extends AppCompatActivity
 //        });
 
         getEventsFromServer("6,8", "true", "33", null, null);
+        currentSection = R.id.nav_all;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -147,23 +151,40 @@ public class HomeActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_all:
-                //TODO chiamata default
-
+                if (currentSection != R.id.nav_all) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
+                    currentSection = R.id.nav_all;
+                }
                 break;
             case R.id.nav_nature:
-                //TODO filtro "natura"
+                if (currentSection != R.id.nav_nature) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
+                    currentSection = R.id.nav_nature;
+                }
                 break;
             case R.id.nav_culture:
-                //TODO filtro "storia"
+                if (currentSection != R.id.nav_culture) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
+                    currentSection = R.id.nav_culture;
+                }
                 break;
             case R.id.nav_food:
-                //TODO filtro "enogastronomia"
+                if (currentSection != R.id.nav_food) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
+                    currentSection = R.id.nav_food;
+                }
                 break;
             case R.id.nav_sport:
-                //TODO filtro "sport"
+                if (currentSection != R.id.nav_sport) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
+                    currentSection = R.id.nav_sport;
+                }
                 break;
             case R.id.nav_passions:
-                //TODO filtro "passioni"
+                if (currentSection != R.id.nav_passions) {
+                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
+                    currentSection = R.id.nav_passions;
+                }
                 break;
             default:
                 break;
