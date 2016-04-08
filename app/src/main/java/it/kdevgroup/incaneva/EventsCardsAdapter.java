@@ -50,7 +50,10 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     @Override
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
-        Picasso.with(ctx).load(events.get(position).getImageLink()).into(cardsHolder.postImage);
+        Picasso.with(ctx)
+                .load(events.get(position).getImageLink())
+                .fit()
+                .into(cardsHolder.postImage);
         cardsHolder.postTitle.setText(events.get(position).getPostTitle());
         if (events.get(position).getPostContent().length() < 130)
             cardsHolder.postContent.setText(events.get(position).getPostContent());
