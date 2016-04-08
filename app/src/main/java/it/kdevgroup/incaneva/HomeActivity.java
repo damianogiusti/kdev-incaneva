@@ -57,7 +57,7 @@ public class HomeActivity extends AppCompatActivity
         cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
-        internetConnection=Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
+        internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
         /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
         //Tocheck if  recycler is on bottom
         if(layoutManager.lastCompletelyVisibleItemPosition()==data.size()-1){
@@ -182,10 +182,10 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {
                     internetConnection.dismiss();
-                }
-                if (currentSection != R.id.nav_all) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
-                    currentSection = R.id.nav_all;
+                    if (currentSection != R.id.nav_all) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
+                        currentSection = R.id.nav_all;
+                    }
                 }
 
                 break;
@@ -194,10 +194,10 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {
                     internetConnection.dismiss();
-                }
-                if (currentSection != R.id.nav_nature) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
-                    currentSection = R.id.nav_nature;
+                    if (currentSection != R.id.nav_nature) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
+                        currentSection = R.id.nav_nature;
+                    }
                 }
 
                 break;
@@ -206,10 +206,10 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {
                     internetConnection.dismiss();
-                }
-                if (currentSection != R.id.nav_culture) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
-                    currentSection = R.id.nav_culture;
+                    if (currentSection != R.id.nav_culture) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
+                        currentSection = R.id.nav_culture;
+                    }
                 }
 
                 break;
@@ -217,12 +217,11 @@ public class HomeActivity extends AppCompatActivity
                 if (!isNetworkAvailable()) {
                     internetConnection.show();
                 } else {
-                        internetConnection.dismiss();
-                }
-                if (currentSection != R.id.nav_food) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
-                    currentSection = R.id.nav_food;
-
+                    internetConnection.dismiss();
+                    if (currentSection != R.id.nav_food) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
+                        currentSection = R.id.nav_food;
+                    }
                 }
                 break;
             case R.id.nav_sport:
@@ -230,11 +229,10 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {
                     internetConnection.dismiss();
-                }
-                if (currentSection != R.id.nav_sport) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
-                    currentSection = R.id.nav_sport;
-
+                    if (currentSection != R.id.nav_sport) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
+                        currentSection = R.id.nav_sport;
+                    }
                 }
                 break;
             case R.id.nav_passions:
@@ -242,12 +240,11 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {
                     internetConnection.dismiss();
+                    if (currentSection != R.id.nav_passions) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
+                        currentSection = R.id.nav_passions;
+                    }
                 }
-                if (currentSection != R.id.nav_passions) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
-                    currentSection = R.id.nav_passions;
-                }
-
                 break;
             default:
                 break;
@@ -256,7 +253,7 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return isNetworkAvailable();
     }
 
     //Metodo che controlla la possibilità di accedere a internet
