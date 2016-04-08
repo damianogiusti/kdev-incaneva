@@ -73,7 +73,6 @@ public class HomeActivity extends AppCompatActivity
         if (!isNetworkAvailable()) {
             Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
         } else {
-
             getEventsFromServer("6,8", "true", "33", null, null);
         }
         currentSection = R.id.nav_all;
@@ -177,55 +176,63 @@ public class HomeActivity extends AppCompatActivity
             case R.id.nav_all:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
-                if (currentSection != R.id.nav_all) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
-                    currentSection = R.id.nav_all;
+                } else {
+                    if (currentSection != R.id.nav_all) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, null);
+                        currentSection = R.id.nav_all;
+                    }
                 }
                 break;
             case R.id.nav_nature:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
-                if (currentSection != R.id.nav_nature) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
-                    currentSection = R.id.nav_nature;
+                } else {
+                    if (currentSection != R.id.nav_nature) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "natura");
+                        currentSection = R.id.nav_nature;
+                    }
                 }
                 break;
             case R.id.nav_culture:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
-                if (currentSection != R.id.nav_culture) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
-                    currentSection = R.id.nav_culture;
+                } else {
+                    if (currentSection != R.id.nav_culture) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "cultura");
+                        currentSection = R.id.nav_culture;
+                    }
                 }
                 break;
             case R.id.nav_food:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
+                } else {
+                  /*  Snackbar.make(recyclerView, "Cibo", Snackbar.LENGTH_SHORT);
+                }*/
                 if (currentSection != R.id.nav_food) {
                     getEventsFromServer("1,6,7,8,9", "true", "8", null, "enogastronomia");
                     currentSection = R.id.nav_food;
+
                 }
                 break;
             case R.id.nav_sport:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
-                if (currentSection != R.id.nav_sport) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
-                    currentSection = R.id.nav_sport;
+                } else {
+                    if (currentSection != R.id.nav_sport) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "sport");
+                        currentSection = R.id.nav_sport;
+                    }
                 }
                 break;
             case R.id.nav_passions:
                 if (!isNetworkAvailable()) {
                     Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE).show();
-                }
-                if (currentSection != R.id.nav_passions) {
-                    getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
-                    currentSection = R.id.nav_passions;
+                } else {
+                    if (currentSection != R.id.nav_passions) {
+                        getEventsFromServer("1,6,7,8,9", "true", "8", null, "passioni");
+                        currentSection = R.id.nav_passions;
+                    }
                 }
                 break;
             default:
