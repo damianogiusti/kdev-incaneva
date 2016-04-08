@@ -54,7 +54,8 @@ public class HomeActivity extends AppCompatActivity
 
         blogEventList = new ArrayList<>();
 
-        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
+        //questa chiamata iniziale permette di usare swapAdapter successivamente
+        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), null);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
@@ -136,8 +137,7 @@ public class HomeActivity extends AppCompatActivity
      * @param events List<> di eventi da mostrare
      */
     public void showEvents(List<BlogEvent> events, String eventFilter) {
-        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext());   //adapter personalizzato che accetta la lista di eventi
-        cardsAdapter.setFilter(eventFilter);
+        cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
 

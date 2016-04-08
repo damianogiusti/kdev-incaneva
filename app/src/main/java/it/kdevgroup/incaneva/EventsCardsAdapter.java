@@ -2,7 +2,6 @@ package it.kdevgroup.incaneva;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.squareup.picasso.Picasso;
@@ -29,9 +27,10 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     private Context ctx;
     private String filter;
 
-    public EventsCardsAdapter(List<BlogEvent> events, Context ctx) {
+    public EventsCardsAdapter(List<BlogEvent> events, Context ctx, String filter) {
         this.events = events;
         this.ctx = ctx;
+        this.filter = filter;
     }
 
     /**
@@ -67,7 +66,13 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         else
             cardsHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
 
-        cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
+        if(filter == null)
+            cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
+        else {
+            ColorManager colorManager = new ColorManager();
+            cardsHolder.btnShowMore.setTextColor(Color.parseColor(colorManager.getHexColor(filter)));
+        }
+
         cardsHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

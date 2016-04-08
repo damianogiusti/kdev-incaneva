@@ -6,11 +6,11 @@ import java.util.Map;
 /**
  * Created by mattia on 08/04/16.
  */
-public class EventsToColorManager {
+public class ColorManager {
 
     private final Map<String, String> colori = new HashMap<>();
 
-    public EventsToColorManager(){
+    public ColorManager(){
         colori.put("eventi", "#ed811c");
         colori.put("storia-cultura", "#bd2c16");
         colori.put("natura", "#7d9e22");
