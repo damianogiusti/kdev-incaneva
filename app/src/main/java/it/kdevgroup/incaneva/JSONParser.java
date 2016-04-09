@@ -7,9 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by damiano on 07/04/16.
@@ -18,7 +16,6 @@ import java.util.Map;
 public class JSONParser {
 
     private static JSONParser ourInstance = null;
-    private final Map<String, String> colori = new HashMap<>();
     public static final String DATA = "data";
 
     public static JSONParser getInstance() {
@@ -30,12 +27,6 @@ public class JSONParser {
 
     private JSONParser() {
         Log.d("test", "JSONParser: costruito");
-        colori.put("eventi", "#ed811c");
-        colori.put("storia-cultura", "#bd2c16");
-        colori.put("natura", "#7d9e22");
-        colori.put("enogastronomia", "#fab71e");
-        colori.put("sport", "#54ccca");
-        colori.put("passioni", "#903c5e");
     }
 
     /**
@@ -87,10 +78,10 @@ public class JSONParser {
             // se il colore dell'evento non è presente
             else {
                 // se non ho gia memorizzato il colore dell'evento,
-                // e il tipo di evento rientra nei colori noti
+                // e il tipo di evento rientra nelle categorie note
                 if (blogEvent.getEventColor() == null &&
-                        colori.containsKey(tipoEvento))
-                    blogEvent.setEventColor(colori.get(tipoEvento));
+                        CategoryColorManager.getInstance().existsCategory(tipoEvento))
+                    blogEvent.setEventColor(CategoryColorManager.getInstance().getHexColor(tipoEvento));
             }
             tmp.add(tipoEvento);
         }

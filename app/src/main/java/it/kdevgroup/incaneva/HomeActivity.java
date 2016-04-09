@@ -138,7 +138,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
+    // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri 
     public void getEventsFromServer(final String blogs, final String old, final String limit, final String offset, final String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
@@ -148,8 +148,8 @@ public class HomeActivity extends AppCompatActivity
                         try {
                             String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                             if (response != null) {
+                                Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-                                Log.d(TAG, "onSuccess: ");
                                 showEvents(blogEventList, currentSection);
                             }
                         } catch (Exception e) {
@@ -163,8 +163,8 @@ public class HomeActivity extends AppCompatActivity
                                           byte[] responseBody, Throwable error) {
                         Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
                         error.printStackTrace();
-                        getEventsFromServer(blogs, old, limit, offset, eventFilter);
-                        Snackbar.make(recyclerView, "Problema di connessione al server", Snackbar.LENGTH_SHORT).show();
+//                        getEventsFromServer(blogs, old, limit, offset, eventFilter);
+//                        Snackbar.make(recyclerView, "Problema di connessione al server", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -221,12 +221,27 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int sezioneCorrente = item.getItemId();
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            String categoryName = CategoryColorManager.getInstance().getCategoryName(sezioneCorrente);
+            if (categoryName == null) {
+                Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
+            }
+            getEventsFromServer("1,6,7,8,9", "true", "8", null, categoryName);
+            currentSection = sezioneCorrente;
+        } else {
+            internetConnection.show();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer != null)
+            drawer.closeDrawer(GravityCompat.START);
 
-        switch (id) {
+        return isNetworkAvailable;
+/*
+        switch (sezioneCorrente) {
             case R.id.nav_all:
                 if (!isNetworkAvailable()) {
-                    internetConnection.show();
                 } else {
                     internetConnection.dismiss();
                     if (currentSection != R.id.nav_all) {
@@ -300,7 +315,7 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
-        return isNetworkAvailable();
+        return isNetworkAvailable();*/
     }
 
     // Metodo che controlla la possibilità di accedere a internet

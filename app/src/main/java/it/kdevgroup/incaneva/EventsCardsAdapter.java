@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.Iterator;
 
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -71,7 +70,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         if (filter == R.id.nav_all)
             cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
         else {
-            cardsHolder.btnShowMore.setTextColor(Color.parseColor(ColorManager.getInstance().getHexColor(filter)));
+            cardsHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
         }
 
         cardsHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
