@@ -39,7 +39,7 @@ public class HomeActivity extends AppCompatActivity
     private ArrayList<BlogEvent> blogEventList;
     private int currentCategory;
     private Snackbar internetConnection;
-
+    private boolean showOldEvents = false;
     private Toolbar toolbar;
 
     @Override
@@ -105,7 +105,7 @@ public class HomeActivity extends AppCompatActivity
         if (!isNetworkAvailable()) {
             internetConnection.show();
         } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            getEventsFromServer("6,8", "true", "33", null, null);
+            getEventsFromServer("6,8", "33", null, null);
         } else if (blogEventList.size() > 0) {
             showFilteredEvents(blogEventList, currentCategory);
         }
@@ -123,11 +123,11 @@ public class HomeActivity extends AppCompatActivity
     }
 
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
-    public void getEventsFromServer(final String blogs, final String old, final String limit, final String offset, final String eventFilter) {
+    public void getEventsFromServer(final String blogs, final String limit, final String offset, final String eventFilter) {
         //TODO iniziare qui il progress indicator (rotellina stile google)
 
-        // ESEMPIO DI CHIAMATA
-        ApiCallSingleton.getInstance().doCall(blogs, old, limit, offset, eventFilter, new AsyncHttpResponseHandler() {
+                // ESEMPIO DI CHIAMATA
+        ApiCallSingleton.getInstance().doCall(blogs, Boolean.toString(showOldEvents), limit, offset, eventFilter, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
@@ -169,7 +169,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void loadMore(){
-        ApiCallSingleton.getInstance().doCall("1,6,7,8,9", "true", "10", ""+blogEventList.size(), "", new AsyncHttpResponseHandler() {
+        ApiCallSingleton.getInstance().doCall("1,6,7,8,9", Boolean.toString(showOldEvents), "10", ""+blogEventList.size(), "", new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
@@ -224,7 +224,9 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.show_old_events) {
+            showOldEvents = !showOldEvents;
+            item.setChecked(showOldEvents);
             return true;
         }
 
@@ -242,7 +244,7 @@ public class HomeActivity extends AppCompatActivity
             if (categoryName == null) {
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
             }
-            getEventsFromServer("1,6,7,8,9", "true", "8", null, categoryName);
+            getEventsFromServer("1,6,7,8,9", "8", null, categoryName);
             currentCategory = categoriaScelta;
         } else {
             internetConnection.show();
