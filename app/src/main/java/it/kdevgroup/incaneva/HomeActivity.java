@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
@@ -59,6 +60,17 @@ public class HomeActivity extends AppCompatActivity
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
+
+
+        // controlla orientamento schermo
+        if (getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_LANDSCAPE) {
+            int numberOfColumns = 2;
+            this.recyclerView.setLayoutManager(new GridLayoutManager
+                    (this, numberOfColumns,
+                            GridLayoutManager.VERTICAL, false));
+        }
+
+
         /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
         //Tocheck if  recycler is on bottom
         if(layoutManager.lastCompletelyVisibleItemPosition()==data.size()-1){
