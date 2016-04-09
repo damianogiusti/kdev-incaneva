@@ -2,6 +2,8 @@ package it.kdevgroup.incaneva;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -32,10 +35,11 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "HomeActivity";
+    public static final String BUNDLE_KEY_FOR_ARRAY = "listaDiEventi";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
     private EventsCardsAdapter cardsAdapter;
-    private List<BlogEvent> blogEventList;
+    private ArrayList<BlogEvent> blogEventList;
     private int currentSection;
     private Snackbar internetConnection;
 
@@ -53,7 +57,13 @@ public class HomeActivity extends AppCompatActivity
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
 
-        blogEventList = new ArrayList<>();
+        // recupero la lista di eventi se ho un savedInstanceState
+        if (savedInstanceState != null) {
+            blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
+        }
+        if (blogEventList == null) {    // se non ho trovato la lista, la istanzio da zero
+            blogEventList = new ArrayList<>();
+        }
 
         //questa chiamata iniziale permette di usare swapAdapter successivamente
         cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), null);   //adapter personalizzato che accetta la lista di eventi
@@ -63,7 +73,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         // controlla orientamento schermo
-        if (getResources().getConfiguration().orientation == getResources().getConfiguration().ORIENTATION_LANDSCAPE) {
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             int numberOfColumns = 2;
             this.recyclerView.setLayoutManager(new GridLayoutManager
                     (this, numberOfColumns,
@@ -89,9 +99,10 @@ public class HomeActivity extends AppCompatActivity
 
         if (!isNetworkAvailable()) {
             internetConnection.show();
-        } else {
+        } else if (blogEventList .size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
             getEventsFromServer("6,8", "true", "33", null, null);
         }
+
         currentSection = R.id.nav_all;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -273,11 +284,18 @@ public class HomeActivity extends AppCompatActivity
         return isNetworkAvailable();
     }
 
-    //Metodo che controlla la possibilità di accedere a internet
+    // Metodo che controlla la possibilità di accedere a internet
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(this.BUNDLE_KEY_FOR_ARRAY, blogEventList);
+        Log.d(TAG, "onSaveInstanceState: ");
     }
 }

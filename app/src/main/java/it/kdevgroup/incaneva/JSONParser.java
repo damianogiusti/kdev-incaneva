@@ -45,8 +45,8 @@ public class JSONParser {
      * @return lista di oggetti di tipo BlogEvent
      * @throws Exception
      */
-    public List<BlogEvent> parseJsonResponse(String jsonBody) throws Exception {
-        List<BlogEvent> eventi = new ArrayList<>();
+    public ArrayList<BlogEvent> parseJsonResponse(String jsonBody) throws Exception {
+        ArrayList<BlogEvent> eventi = new ArrayList<>();
         JSONObject jsnobject = new JSONObject(jsonBody);
         JSONArray jsonArray = jsnobject.getJSONArray(DATA);
         for (int i = 0; i < jsonArray.length(); i++) {

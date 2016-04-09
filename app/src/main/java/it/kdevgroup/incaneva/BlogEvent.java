@@ -1,13 +1,17 @@
 package it.kdevgroup.incaneva;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.Html;
 import android.text.Spanned;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by andrea on 07/04/16.
  */
-public class BlogEvent {
+public class BlogEvent implements Parcelable {
 
     public static final String KEY_blogname = "blogname";
     public static final String KEY_blogname_slug = "blogname_slug";
@@ -57,7 +61,7 @@ public class BlogEvent {
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.categoryName = categoryName;
-        this.categoryLink=categoryLink;
+        this.categoryLink = categoryLink;
         this.eventType = eventType;
         this.imageLink = imageLink;
         this.startTime = startTime;
@@ -118,8 +122,8 @@ public class BlogEvent {
         this.ID = ID;
     }
 
-    public void setCategoryLink(String categoryLink){
-        this.categoryLink=categoryLink;
+    public void setCategoryLink(String categoryLink) {
+        this.categoryLink = categoryLink;
     }
 
     public void setBlogName(String blogName) {
@@ -160,5 +164,61 @@ public class BlogEvent {
 
     public void setEventColor(String eventColor) {
         this.eventColor = eventColor;
+    }
+
+    // PARTE PER LA PARCELLIZZAZIONE
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(ID);
+        dest.writeString(blogName);
+        dest.writeString(blogNameSlug);
+        dest.writeString(postTitle);
+        dest.writeString(Html.toHtml(postContent));
+        dest.writeString(categoryName);
+        dest.writeString(categoryLink);
+        dest.writeStringList(eventType);
+        dest.writeString(imageLink);
+        dest.writeLong(startTime);
+        dest.writeLong(endTime);
+        dest.writeString(eventColor);
+    }
+
+    public final static Parcelable.Creator<BlogEvent> CREATOR = new ClassLoaderCreator<BlogEvent>() {
+        @Override
+        public BlogEvent createFromParcel(Parcel source, ClassLoader loader) {
+            return new BlogEvent(source);
+        }
+
+        @Override
+        public BlogEvent createFromParcel(Parcel source) {
+            return new BlogEvent(source);
+        }
+
+        @Override
+        public BlogEvent[] newArray(int size) {
+            return new BlogEvent[size];
+        }
+    };
+
+    // costruttore che inizializza l'oggetto a partire da un Parcel salvato
+    private BlogEvent(Parcel in) {
+        ID = in.readInt();
+        blogName = in.readString();
+        blogNameSlug = in.readString();
+        postTitle = in.readString();
+        postContent = Html.fromHtml(in.readString());
+        categoryName = in.readString();
+        categoryLink = in.readString();
+        in.readStringList(eventType);
+        imageLink = in.readString();
+        startTime = in.readLong();
+        endTime = in.readLong();
+        eventColor = in.readString();
     }
 }
