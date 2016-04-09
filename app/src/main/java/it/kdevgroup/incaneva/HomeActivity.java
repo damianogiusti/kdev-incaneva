@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -77,22 +78,33 @@ public class HomeActivity extends AppCompatActivity
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
 
-
-        // controlla orientamento schermo
+        // --- LAYOUT MANAGER
+        /*
+        Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
+        come Linear ma lo istanzio come Grid, per poter avere disponibili i metodi del Linear, tra
+        i quali quello che mi consente di stabilire qual'è l'ultimo elemento della lista completamente
+        visibile. FIGATTAAA
+         */
+        final LinearLayoutManager layoutManager;
+        int colonne = 1;
+        // se lo schermo è orizzontale, allora le colonne da utilizzare sono due
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            int numberOfColumns = 2;
-            this.recyclerView.setLayoutManager(new GridLayoutManager
-                    (this, numberOfColumns,
-                            GridLayoutManager.VERTICAL, false));
+            colonne = 2;
         }
+        layoutManager = new GridLayoutManager(this, colonne, GridLayoutManager.VERTICAL, false);
+        this.recyclerView.setLayoutManager(layoutManager);
 
+        // resta in ascolto dello scorrimento della lista di card
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
-        /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
-        //Tocheck if  recycler is on bottom
-        if(layoutManager.lastCompletelyVisibleItemPosition()==data.size()-1){
-            //Its at bottom ..
-        }
-        */
+                // se è visualizzato l'ultimo elemento, chiamo il server
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1)
+                    Toast.makeText(HomeActivity.this, "Arrivato alla fine", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
