@@ -138,7 +138,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri 
+    // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String blogs, final String old, final String limit, final String offset, final String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
@@ -224,6 +224,7 @@ public class HomeActivity extends AppCompatActivity
         int sezioneCorrente = item.getItemId();
         boolean isNetworkAvailable = isNetworkAvailable();
         if (isNetworkAvailable) {
+            internetConnection.dismiss();
             String categoryName = CategoryColorManager.getInstance().getCategoryName(sezioneCorrente);
             if (categoryName == null) {
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
