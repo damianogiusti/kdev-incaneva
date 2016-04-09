@@ -8,18 +8,26 @@ import java.util.Map;
  */
 public class ColorManager {
 
-    private final Map<String, String> colori = new HashMap<>();
+    private static ColorManager instance;
+    private final Map<Integer, String> colori = new HashMap<>();
 
-    public ColorManager(){
-        colori.put("eventi", "#ed811c");
-        colori.put("storia-cultura", "#bd2c16");
-        colori.put("natura", "#7d9e22");
-        colori.put("enogastronomia", "#fab71e");
-        colori.put("sport", "#54ccca");
-        colori.put("passioni", "#903c5e");
+    public static ColorManager getInstance() {
+        if (instance == null) {
+            instance = new ColorManager();
+        }
+        return instance;
     }
 
-    public String getHexColor(String eventName){
-        return colori.get(eventName);
+    private ColorManager() {
+        colori.put(R.id.nav_all, "#ed811c");
+        colori.put(R.id.nav_culture, "#bd2c16");
+        colori.put(R.id.nav_nature, "#7d9e22");
+        colori.put(R.id.nav_food, "#fab71e");
+        colori.put(R.id.nav_sport, "#54ccca");
+        colori.put(R.id.nav_passions, "#903c5e");
+    }
+
+    public String getHexColor(int eventType) {
+        return colori.get(eventType);
     }
 }

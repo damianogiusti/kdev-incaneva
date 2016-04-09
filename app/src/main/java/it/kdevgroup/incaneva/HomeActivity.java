@@ -36,6 +36,7 @@ public class HomeActivity extends AppCompatActivity
 
     private static final String TAG = "HomeActivity";
     public static final String BUNDLE_KEY_FOR_ARRAY = "listaDiEventi";
+    public static final String BUNDLE_KEY_CURRENTSECTION = "sezioneNavigazioneCorrente";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
     private EventsCardsAdapter cardsAdapter;
@@ -60,13 +61,18 @@ public class HomeActivity extends AppCompatActivity
         // recupero la lista di eventi se ho un savedInstanceState
         if (savedInstanceState != null) {
             blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
+            currentSection = savedInstanceState.getInt(BUNDLE_KEY_CURRENTSECTION);
+            Log.d(TAG, "onCreate: trovati elementi nel bundle");
         }
         if (blogEventList == null) {    // se non ho trovato la lista, la istanzio da zero
             blogEventList = new ArrayList<>();
         }
+        if (currentSection == 0) {      // se non ho trovato la sezione attuale, la inizializzo
+            currentSection = R.id.nav_all;
+        }
 
         //questa chiamata iniziale permette di usare swapAdapter successivamente
-        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), null);   //adapter personalizzato che accetta la lista di eventi
+        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), currentSection);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
@@ -99,11 +105,12 @@ public class HomeActivity extends AppCompatActivity
 
         if (!isNetworkAvailable()) {
             internetConnection.show();
-        } else if (blogEventList .size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
             getEventsFromServer("6,8", "true", "33", null, null);
+        } else if (blogEventList.size() > 0) {
+            showEvents(blogEventList, currentSection);
         }
 
-        currentSection = R.id.nav_all;
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -131,7 +138,7 @@ public class HomeActivity extends AppCompatActivity
                             if (response != null) {
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
                                 Log.d(TAG, "onSuccess: ");
-                                showEvents(blogEventList, eventFilter);
+                                showEvents(blogEventList, currentSection);
                             }
                         } catch (Exception e) {
                             Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
@@ -161,7 +168,7 @@ public class HomeActivity extends AppCompatActivity
      *
      * @param events List<> di eventi da mostrare
      */
-    public void showEvents(List<BlogEvent> events, String eventFilter) {
+    public void showEvents(List<BlogEvent> events, int eventFilter) {
         cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
@@ -296,6 +303,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(this.BUNDLE_KEY_FOR_ARRAY, blogEventList);
-        Log.d(TAG, "onSaveInstanceState: ");
+        outState.putInt(this.BUNDLE_KEY_CURRENTSECTION, currentSection);
+        Log.d(TAG, "onSaveInstanceState: salvo elementi nel bundle");
     }
 }
