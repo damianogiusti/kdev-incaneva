@@ -119,6 +119,13 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         */
     }
 
+    public void addItems(List<BlogEvent> eventsToAdd){
+        for(BlogEvent newEvent : eventsToAdd){
+            events.add(newEvent);
+            notifyItemInserted(events.size()-1);
+        }
+    }
+
     public String dayoftheweek(String dowt){
         String i=dowt;
         String dayString;

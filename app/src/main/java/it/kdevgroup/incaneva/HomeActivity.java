@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -42,6 +43,8 @@ public class HomeActivity extends AppCompatActivity
     private Snackbar internetConnection;
     private boolean showOldEvents = false;
     private Toolbar toolbar;
+    private Toast toastNoNewEvents;
+    private Toast toastLookingForEvents;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,9 @@ public class HomeActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        toastNoNewEvents = Toast.makeText(HomeActivity.this, "Nessun nuovo evento", Toast.LENGTH_SHORT);
+        toastLookingForEvents = Toast.makeText(HomeActivity.this, "Cerco altri eventi...", Toast.LENGTH_SHORT);
 
         // recupero la lista di eventi se ho un savedInstanceState
         if (savedInstanceState != null) {
@@ -96,9 +102,7 @@ public class HomeActivity extends AppCompatActivity
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
                 if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1) {
-                    Toast.makeText(HomeActivity.this, "Arrivato alla fine", Toast.LENGTH_SHORT).show();
-                    //loadMore(); TODO
-                    //caricare nuovi eventi con offset events.size()
+                    loadMore();
                 }
             }
         });
@@ -106,7 +110,7 @@ public class HomeActivity extends AppCompatActivity
         if (!isNetworkAvailable()) {
             internetConnection.show();
         } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            getEventsFromServer("33", null, null);
+            getEventsFromServer("10", null, null);
         } else if (blogEventList.size() > 0) {
             showFilteredEvents(blogEventList, currentCategory);
         }
@@ -127,7 +131,7 @@ public class HomeActivity extends AppCompatActivity
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
         //TODO iniziare qui il progress indicator (rotellina stile google)
 
-                // ESEMPIO DI CHIAMATA
+        // ESEMPIO DI CHIAMATA
         ApiCallSingleton.getInstance().doCall(events_id, Boolean.toString(showOldEvents), limit, offset, eventFilter, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -170,34 +174,49 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void loadMore(){
-        ApiCallSingleton.getInstance().doCall("1,6,7,8", Boolean.toString(showOldEvents), "10", ""+blogEventList.size(), "", new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        try {
-                            String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
-                            if (response != null) {
-                                Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
-                                blogEventList.addAll(JSONParser.getInstance().parseJsonResponse(response));
+        if(toastNoNewEvents.getView().getWindowVisibility() != View.VISIBLE && toastLookingForEvents.getView().getWindowVisibility() != View.VISIBLE) {
+            toastLookingForEvents.show();
+            ApiCallSingleton.getInstance().doCall(events_id,
+                    Boolean.toString(showOldEvents),
+                    "6",
+                    Integer.toString(blogEventList.size()),
+                    CategoryColorManager.getInstance().getCategoryName(currentCategory),
+                    new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            try {
+                                String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
+                                if (response != null) {
+                                    Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
+                                    List<BlogEvent> newItems;
+                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) {
+                                        blogEventList.addAll(newItems);
+                                        cardsAdapter.addItems(newItems);
+                                    } else {
+                                        toastNoNewEvents.show();
+                                    }
+                                }
+                            } catch (Exception e) {
+                                toastNoNewEvents.show();
+                                //Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); //lancia "End of input at character 0 of" causa probabile: stringa response vuota
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
-                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        }
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
                         }
                     }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers,
-                                          byte[] responseBody, Throwable error) {
-                        Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                    }
-                }
-        );
+            );
+        }
     }
 
     @Override
