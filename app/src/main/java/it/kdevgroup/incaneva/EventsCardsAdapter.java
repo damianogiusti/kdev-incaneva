@@ -73,12 +73,22 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             cardsHolder.btnShowMore.setTextColor(Color.parseColor(colorManager.getHexColor(filter)));
         }
 
+        cardsHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()) +
+                events.get(position).getEventDay());
+
+        cardsHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()));
+
+        cardsHolder.hour.setText(events.get(position).getEventHour()+":"+
+                events.get(position).getEventMinute());
+
         cardsHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO
             }
         });
+
+
     }
 
     //setta il colore dell'evento in base al filtro
@@ -123,6 +133,63 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         */
     }
 
+    public String dayoftheweek(String dowt){
+        String i=dowt;
+        String dayString;
+        switch (i){
+            case "1": dayString="LUN ";
+                break;
+            case "2": dayString="MAR ";
+                break;
+            case "3": dayString="MER ";
+                break;
+            case "4": dayString="GIO ";
+                break;
+            case "5": dayString="VEN ";
+                break;
+            case "6": dayString="SAB ";
+                break;
+            case "7": dayString="DOM ";
+                break;
+            default: dayString="";
+        }
+
+        return dayString;
+    }
+
+    public String monthoftheYear(String moty){
+        String i=moty;
+        String monthString;
+        switch (i){
+            case "01": monthString="Gennaio";
+                break;
+            case "02": monthString="Febbraio";
+                break;
+            case "03": monthString="Marzo";
+                break;
+            case "04": monthString="Aprile";
+                break;
+            case "05": monthString="Maggio";
+                break;
+            case "06": monthString="Giugno";
+                break;
+            case "07": monthString="Luglio";
+                break;
+            case "08": monthString="Agosto";
+                break;
+            case "09": monthString="Settembre";
+                break;
+            case "10": monthString="Ottobre";
+                break;
+            case "11": monthString="Novembre";
+                break;
+            case "12": monthString="Dicembre";
+                break;
+            default: monthString="";
+        }
+        return monthString;
+    }
+
     /**
      * "Contenitore" di ogni card
      */
@@ -133,6 +200,9 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView postContent;
         ImageView postImage;
         Button btnShowMore;
+        TextView day;
+        TextView month;
+        TextView hour;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -142,6 +212,9 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             postContent = (TextView) itemView.findViewById(R.id.postContent);
             postImage = (ImageView) itemView.findViewById(R.id.postImage);
             btnShowMore = (Button) itemView.findViewById(R.id.btnMoreInfo);
+            day=(TextView)itemView.findViewById(R.id.event_day);
+            month=(TextView)itemView.findViewById(R.id.event_month);
+            hour=(TextView)itemView.findViewById(R.id.event_hour);
         }
     }
 
