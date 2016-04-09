@@ -1,13 +1,17 @@
 package it.kdevgroup.incaneva;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.Html;
 import android.text.Spanned;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by andrea on 07/04/16.
  */
-public class BlogEvent {
+public class BlogEvent implements Parcelable {
 
     public static final String KEY_blogname = "blogname";
     public static final String KEY_blogname_slug = "blogname_slug";
@@ -74,7 +78,7 @@ public class BlogEvent {
         this.postTitle = postTitle;
         this.postContent = postContent;
         this.categoryName = categoryName;
-        this.categoryLink=categoryLink;
+        this.categoryLink = categoryLink;
         this.eventType = eventType;
         this.imageLink = imageLink;
         this.startTime = startTime;
@@ -135,13 +139,21 @@ public class BlogEvent {
         return eventMonth;
     }
 
-    public String getEventDay() { return eventDay; }
+    public String getEventDay() {
+        return eventDay;
+    }
 
-    public String getEventHour() { return eventHour; }
+    public String getEventHour() {
+        return eventHour;
+    }
 
-    public String getDayofWeek() { return dayofWeek; }
+    public String getDayofWeek() {
+        return dayofWeek;
+    }
 
-    public String getEventMinute() { return eventMinute; }
+    public String getEventMinute() {
+        return eventMinute;
+    }
 
 
     //metodi di set
@@ -150,8 +162,8 @@ public class BlogEvent {
         this.ID = ID;
     }
 
-    public void setCategoryLink(String categoryLink){
-        this.categoryLink=categoryLink;
+    public void setCategoryLink(String categoryLink) {
+        this.categoryLink = categoryLink;
     }
 
     public void setBlogName(String blogName) {
@@ -194,13 +206,90 @@ public class BlogEvent {
         this.eventColor = eventColor;
     }
 
-    public void setEventMonth(String eventMonth) { this.eventMonth = eventMonth; }
+    public void setEventMonth(String eventMonth) {
+        this.eventMonth = eventMonth;
+    }
 
-    public void setEventDay(String eventDay) { this.eventDay = eventDay; }
+    public void setEventDay(String eventDay) {
+        this.eventDay = eventDay;
+    }
 
-    public void setEventHour(String eventHour) { this.eventHour = eventHour; }
+    public void setEventHour(String eventHour) {
+        this.eventHour = eventHour;
+    }
 
-    public void setDayofWeek(String dayofWeek) { this.dayofWeek = dayofWeek; }
+    public void setDayofWeek(String dayofWeek) {
+        this.dayofWeek = dayofWeek;
+    }
 
-    public void setEventMinute(String eventMinute) {this.eventMinute = eventMinute; }
+    public void setEventMinute(String eventMinute) {
+        this.eventMinute = eventMinute;
+    }
+
+    // PARTE PER LA PARCELLIZZAZIONE
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(ID);
+        dest.writeString(blogName);
+        dest.writeString(blogNameSlug);
+        dest.writeString(postTitle);
+        dest.writeString(Html.toHtml(postContent));
+        dest.writeString(categoryName);
+        dest.writeString(categoryLink);
+        dest.writeStringList(eventType);
+        dest.writeString(imageLink);
+        dest.writeLong(startTime);
+        dest.writeLong(endTime);
+        dest.writeString(eventColor);
+        dest.writeString(eventMonth);
+        dest.writeString(eventDay);
+        dest.writeString(eventHour);
+        dest.writeString(eventMinute);
+        dest.writeString(dayofWeek);
+    }
+
+    public final static Parcelable.Creator<BlogEvent> CREATOR = new ClassLoaderCreator<BlogEvent>() {
+        @Override
+        public BlogEvent createFromParcel(Parcel source, ClassLoader loader) {
+            return new BlogEvent(source);
+        }
+
+        @Override
+        public BlogEvent createFromParcel(Parcel source) {
+            return new BlogEvent(source);
+        }
+
+        @Override
+        public BlogEvent[] newArray(int size) {
+            return new BlogEvent[size];
+        }
+    };
+
+    // costruttore che inizializza l'oggetto a partire da un Parcel salvato
+    private BlogEvent(Parcel in) {
+        ID = in.readInt();
+        blogName = in.readString();
+        blogNameSlug = in.readString();
+        postTitle = in.readString();
+        postContent = Html.fromHtml(in.readString());
+        categoryName = in.readString();
+        categoryLink = in.readString();
+        in.readStringList(eventType);
+        imageLink = in.readString();
+        startTime = in.readLong();
+        endTime = in.readLong();
+        eventColor = in.readString();
+        eventMonth=in.readString();
+        eventDay=in.readString();
+        eventHour=in.readString();
+        eventMinute=in.readString();
+        dayofWeek=in.readString();
+    }
+
 }
