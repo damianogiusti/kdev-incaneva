@@ -25,9 +25,9 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
 
     private List<BlogEvent> events;  //lista di eventi
     private Context ctx;
-    private String filter;
+    private int filter;
 
-    public EventsCardsAdapter(List<BlogEvent> events, Context ctx, String filter) {
+    public EventsCardsAdapter(List<BlogEvent> events, Context ctx, int filter) {
         this.events = events;
         this.ctx = ctx;
         this.filter = filter;
@@ -55,10 +55,11 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     @Override
     public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
         cardsHolder.blogName.setText(events.get(position).getBlogName());
-        // carico l'immagine
+        // carico l'immagine con picasso
         Picasso.with(ctx)
                 .load(events.get(position).getImageLink())
                 .fit()
+//                .networkPolicy(NetworkPolicy.OFFLINE, NetworkPolicy.NO_CACHE)
                 .into(cardsHolder.postImage);
         cardsHolder.postTitle.setText(events.get(position).getPostTitle());
         if (events.get(position).getPostContent().length() < 130)
@@ -66,11 +67,10 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         else
             cardsHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
 
-        if(filter == null)
+        if (filter == R.id.nav_all)
             cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
         else {
-            ColorManager colorManager = new ColorManager();
-            cardsHolder.btnShowMore.setTextColor(Color.parseColor(colorManager.getHexColor(filter)));
+            cardsHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
         }
 
         cardsHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()) +
@@ -92,16 +92,15 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     }
 
     //setta il colore dell'evento in base al filtro
-    public void setEventColor(CardViewHolder cardsHolder, int position){
-        if(filter == null){
+    public void setEventColor(CardViewHolder cardsHolder, int position) {
+        if (filter == R.id.nav_all) {
             cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
-        }
-        else {
+        } else {
 
         }
     }
 
-    public void setFilter(String filter){
+    public void setFilter(int filter) {
         this.filter = filter;
     }
 

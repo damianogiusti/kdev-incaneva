@@ -2,10 +2,13 @@ package it.kdevgroup.incaneva;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.design.widget.NavigationView;
@@ -18,7 +21,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -31,10 +36,12 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "HomeActivity";
+    public static final String BUNDLE_KEY_FOR_ARRAY = "listaDiEventi";
+    public static final String BUNDLE_KEY_CURRENTSECTION = "sezioneNavigazioneCorrente";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
     private EventsCardsAdapter cardsAdapter;
-    private List<BlogEvent> blogEventList;
+    private ArrayList<BlogEvent> blogEventList;
     private int currentSection;
     private Snackbar internetConnection;
 
@@ -52,19 +59,52 @@ public class HomeActivity extends AppCompatActivity
         LinearLayoutManager linearRecyclerManager = new LinearLayoutManager(getApplicationContext());  //manager per la posizione delle carte
         recyclerView.setLayoutManager(linearRecyclerManager);
 
-        blogEventList = new ArrayList<>();
+        // recupero la lista di eventi se ho un savedInstanceState
+        if (savedInstanceState != null) {
+            blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
+            currentSection = savedInstanceState.getInt(BUNDLE_KEY_CURRENTSECTION);
+            Log.d(TAG, "onCreate: trovati elementi nel bundle");
+        }
+        if (blogEventList == null) {    // se non ho trovato la lista, la istanzio da zero
+            blogEventList = new ArrayList<>();
+        }
+        if (currentSection == 0) {      // se non ho trovato la sezione attuale, la inizializzo
+            currentSection = R.id.nav_all;
+        }
 
         //questa chiamata iniziale permette di usare swapAdapter successivamente
-        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), null);   //adapter personalizzato che accetta la lista di eventi
+        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), currentSection);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
-        /*TODO chiamare il server con questo metodo quando l'utente arriva alla fine dello scroll
-        //Tocheck if  recycler is on bottom
-        if(layoutManager.lastCompletelyVisibleItemPosition()==data.size()-1){
-            //Its at bottom ..
+
+        // --- LAYOUT MANAGER
+        /*
+        Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
+        come Linear ma lo istanzio come Grid, per poter avere disponibili i metodi del Linear, tra
+        i quali quello che mi consente di stabilire qual'è l'ultimo elemento della lista completamente
+        visibile. FIGATTAAA
+         */
+        final LinearLayoutManager layoutManager;
+        int colonne = 1;
+        // se lo schermo è orizzontale, allora le colonne da utilizzare sono due
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            colonne = 2;
         }
-        */
+        layoutManager = new GridLayoutManager(this, colonne, GridLayoutManager.VERTICAL, false);
+        this.recyclerView.setLayoutManager(layoutManager);
+
+        // resta in ascolto dello scorrimento della lista di card
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                // se è visualizzato l'ultimo elemento, chiamo il server
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1)
+                    Toast.makeText(HomeActivity.this, "Arrivato alla fine", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -77,10 +117,12 @@ public class HomeActivity extends AppCompatActivity
 
         if (!isNetworkAvailable()) {
             internetConnection.show();
-        } else {
+        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
             getEventsFromServer("6,8", "true", "33", null, null);
+        } else if (blogEventList.size() > 0) {
+            showEvents(blogEventList, currentSection);
         }
-        currentSection = R.id.nav_all;
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,7 +138,7 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    //metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri (TODO)
+    // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String blogs, final String old, final String limit, final String offset, final String eventFilter) {
 
         // ESEMPIO DI CHIAMATA
@@ -106,9 +148,9 @@ public class HomeActivity extends AppCompatActivity
                         try {
                             String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                             if (response != null) {
+                                Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
                                 blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-                                Log.d(TAG, "onSuccess: ");
-                                showEvents(blogEventList, eventFilter);
+                                showEvents(blogEventList, currentSection);
                             }
                         } catch (Exception e) {
                             Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
@@ -121,8 +163,8 @@ public class HomeActivity extends AppCompatActivity
                                           byte[] responseBody, Throwable error) {
                         Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
                         error.printStackTrace();
-                        getEventsFromServer(blogs, old, limit, offset, eventFilter);
-                        Snackbar.make(recyclerView, "Problema di connessione al server", Snackbar.LENGTH_SHORT).show();
+//                        getEventsFromServer(blogs, old, limit, offset, eventFilter);
+//                        Snackbar.make(recyclerView, "Problema di connessione al server", Snackbar.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -138,7 +180,7 @@ public class HomeActivity extends AppCompatActivity
      *
      * @param events List<> di eventi da mostrare
      */
-    public void showEvents(List<BlogEvent> events, String eventFilter) {
+    public void showEvents(List<BlogEvent> events, int eventFilter) {
         cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);   //adapter personalizzato che accetta la lista di eventi
         recyclerView.swapAdapter(cardsAdapter, false);                  //l'adapter gestirà le CardView da inserire nel recycler view
     }
@@ -179,12 +221,28 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int sezioneCorrente = item.getItemId();
+        boolean isNetworkAvailable = isNetworkAvailable();
+        if (isNetworkAvailable) {
+            internetConnection.dismiss();
+            String categoryName = CategoryColorManager.getInstance().getCategoryName(sezioneCorrente);
+            if (categoryName == null) {
+                Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
+            }
+            getEventsFromServer("1,6,7,8,9", "true", "8", null, categoryName);
+            currentSection = sezioneCorrente;
+        } else {
+            internetConnection.show();
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer != null)
+            drawer.closeDrawer(GravityCompat.START);
 
-        switch (id) {
+        return isNetworkAvailable;
+/*
+        switch (sezioneCorrente) {
             case R.id.nav_all:
                 if (!isNetworkAvailable()) {
-                    internetConnection.show();
                 } else {
                     internetConnection.dismiss();
                     if (currentSection != R.id.nav_all) {
@@ -258,14 +316,22 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
-        return isNetworkAvailable();
+        return isNetworkAvailable();*/
     }
 
-    //Metodo che controlla la possibilità di accedere a internet
+    // Metodo che controlla la possibilità di accedere a internet
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(this.BUNDLE_KEY_FOR_ARRAY, blogEventList);
+        outState.putInt(this.BUNDLE_KEY_CURRENTSECTION, currentSection);
+        Log.d(TAG, "onSaveInstanceState: salvo elementi nel bundle");
     }
 }
