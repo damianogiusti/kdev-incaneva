@@ -45,7 +45,6 @@ public class JSONParser {
             JSONObject obj = jsonArray.getJSONObject(i);
             eventi.add(parseJsonObject(obj));
         }
-        Collections.reverse(eventi);
         return eventi;
     }
 

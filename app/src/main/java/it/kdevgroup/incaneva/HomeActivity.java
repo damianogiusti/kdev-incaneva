@@ -18,14 +18,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
-
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
@@ -41,7 +41,7 @@ public class HomeActivity extends AppCompatActivity
     private ArrayList<BlogEvent> blogEventList;
     private int currentCategory;
     private Snackbar internetConnection;
-    private boolean showOldEvents = false;
+    private boolean showOldEvents = true;
     private Toolbar toolbar;
     private Toast toastNoNewEvents;
     private Toast toastLookingForEvents;
@@ -72,7 +72,11 @@ public class HomeActivity extends AppCompatActivity
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
-        //questa chiamata iniziale permette di usare swapAdapter successivamente
+        /**
+         * questa chiamata iniziale permette di usare swapAdapter successivamente
+         * IMPORTANTE: CON QUESTA CHIAMATA SI LEGANO L'ADAPTER E blogEventList, CHE MODIFICANDOLA
+         * CON METODI DELL'ADAPTER (addEvents) VERRÀ MODIFICATA ANCHE NELL'ACTIVITY
+         */
         cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
@@ -130,75 +134,25 @@ public class HomeActivity extends AppCompatActivity
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
         //TODO iniziare qui il progress indicator (rotellina stile google)
-
-        // ESEMPIO DI CHIAMATA
-        ApiCallSingleton.getInstance().doCall(events_id, Boolean.toString(showOldEvents), limit, offset, eventFilter, new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        try {
-                            String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
-                            if (response != null) {
-                                Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
-                                blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-                                showFilteredEvents(blogEventList, currentCategory);
-                            }
-                        } catch (Exception e) {
-                            Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers,
-                                          byte[] responseBody, Throwable error) {
-                        Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-
-                    @Override
-                    public void onStart() {
-                        super.onStart();
-                    }
-                }
-        );
-    }
-
-    /**
-     * Aggiorna la lista degli eventi
-     *
-     * @param events List<> di eventi da mostrare
-     */
-    public void showFilteredEvents(List<BlogEvent> events, int eventFilter) {
-        cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);
-        recyclerView.swapAdapter(cardsAdapter, false);
-    }
-
-    public void loadMore(){
-        if(toastNoNewEvents.getView().getWindowVisibility() != View.VISIBLE && toastLookingForEvents.getView().getWindowVisibility() != View.VISIBLE) {
-            toastLookingForEvents.show();
-            ApiCallSingleton.getInstance().doCall(events_id,
-                    Boolean.toString(showOldEvents),
-                    "6",
-                    Integer.toString(blogEventList.size()),
-                    CategoryColorManager.getInstance().getCategoryName(currentCategory),
-                    new AsyncHttpResponseHandler() {
+        if(!ApiCallSingleton.getInstance().isConnectionOpen()) {
+            // ESEMPIO DI CHIAMATA
+            // settato parametro old a false per ottenere un layout dell'app simile alla pagina
+            // http://incaneva.it/blog/category/eventi/ e aggirare il fatto che le chiamate al php
+            // ritornino l'evento più recente per primo
+            ApiCallSingleton.getInstance().doCall(events_id, "false", limit, offset, eventFilter, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             try {
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
                                     Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
-                                    List<BlogEvent> newItems;
-                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) {
-                                        blogEventList.addAll(newItems);
-                                        cardsAdapter.addItems(newItems);
-                                    } else {
-                                        toastNoNewEvents.show();
-                                    }
+                                    blogEventList = JSONParser.getInstance().parseJsonResponse(response);
+                                    cardsAdapter.notifyDataSetChanged();
+                                    Collections.reverse(blogEventList);
+                                    showFilteredEvents(blogEventList, currentCategory);
                                 }
                             } catch (Exception e) {
-                                toastNoNewEvents.show();
-                                //Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); //lancia "End of input at character 0 of" causa probabile: stringa response vuota
+                                Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }
@@ -219,6 +173,73 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    public void loadMore(){
+        //controllo se c'è già una connessione attiva
+        if(!ApiCallSingleton.getInstance().isConnectionOpen()) {
+            toastLookingForEvents.show();
+            ApiCallSingleton.getInstance().doCall(events_id,
+                    "true",
+                    "6",
+                    Integer.toString(blogEventList.size()-1),
+                    CategoryColorManager.getInstance().getCategoryName(currentCategory),
+                    new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            try {
+                                String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
+                                if (response != null) {
+                                    Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
+                                    final List<BlogEvent> newItems;
+                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) {
+                                        cardsAdapter.addEvents(newItems);
+                                        Log.i("BLOGEVENTLIST DOPO", "" + blogEventList.size());
+                                        recyclerView.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //call smooth scroll
+                                                recyclerView.smoothScrollToPosition(blogEventList.size() - newItems.size());
+                                            }
+                                        });
+                                    } else {
+                                        toastNoNewEvents.show();
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                toastNoNewEvents.show();
+                                //Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); //lancia "End of input at character 0 of" causa probabile: stringa response vuota
+                                e.printStackTrace();
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers,
+                                              byte[] responseBody, Throwable error) {
+                            Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        }
+
+                        @Override
+                        public void onStart() {
+                            super.onStart();
+                        }
+                    }
+            );
+        }
+    }
+
+    /**
+     * Aggiorna la lista degli eventi
+     *
+     * @param events List<> di eventi da mostrare
+     */
+    public void showFilteredEvents(List<BlogEvent> events, int eventFilter) {
+        //cardsAdapter.changeEvents(events, eventFilter);
+        cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);
+        recyclerView.swapAdapter(cardsAdapter, false);
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -234,6 +255,12 @@ public class HomeActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.show_old_events).setChecked(showOldEvents);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -264,8 +291,13 @@ public class HomeActivity extends AppCompatActivity
             if (categoryName == null) {
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
             }
-            getEventsFromServer("8", null, categoryName);
-            currentCategory = categoriaScelta;
+            //questo if è per aggirare un bug che, se sono sulla categoria natura ad esempio
+            //e filtro di nuovo per natura, la lista non viene popolata/l'adapter da problemi,
+            //non sono in grado di localizzare con precisione e non ho voglia a mezzanotte e mezza
+            if(categoriaScelta != currentCategory) {
+                getEventsFromServer("8", null, categoryName);
+                currentCategory = categoriaScelta;
+            }
         } else {
             internetConnection.show();
         }

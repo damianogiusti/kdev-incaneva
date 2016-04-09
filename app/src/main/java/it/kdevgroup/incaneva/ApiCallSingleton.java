@@ -18,7 +18,7 @@ public class ApiCallSingleton {
     private static final String TAG = "ApiCallSingleton";
 
     private static ApiCallSingleton ourInstance = null;
-
+    private boolean connectionOpen = false;
     private String result;
 
     public static ApiCallSingleton getInstance() {
@@ -78,6 +78,7 @@ public class ApiCallSingleton {
             requestParams.add(filter, filterValue);
         }
 
+        connectionOpen = true;
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
 
@@ -91,6 +92,7 @@ public class ApiCallSingleton {
      * @throws Exception
      */
     public String validateResponse(String response) throws Exception {
+        connectionOpen = false;
         JSONObject object = new JSONObject(response);
         boolean success = object.getBoolean("success");
         if (success) {
@@ -101,7 +103,9 @@ public class ApiCallSingleton {
         }
     }
 
-
+    public boolean isConnectionOpen(){
+        return connectionOpen;
+    }
 
 
 }

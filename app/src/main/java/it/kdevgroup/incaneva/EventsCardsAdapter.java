@@ -88,7 +88,6 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             }
         });
 
-
     }
 
     @Override
@@ -101,28 +100,23 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         return events.size();
     }
 
-    public void insertItems(List<BlogEvent> eventsToInsert) {
-        //svuotamento iniziale della lista di eventi già presenti
-        Iterator<BlogEvent> it = events.iterator();
-        while (it.hasNext()) {
-            it.next();
-            notifyItemRemoved(events.indexOf(it));
-            it.remove();
-        }
-        it = eventsToInsert.iterator();
-        //inserimento dei nuovi elementi ottenuti con il filtro
-        /*
-        while(it.hasNext()){
-            it.next();
-            notifyItemRemoved(events.indexOf(it));
-        }
-        */
-    }
-
-    public void addItems(List<BlogEvent> eventsToAdd){
+    public void addEvents(List<BlogEvent> eventsToAdd){
         for(BlogEvent newEvent : eventsToAdd){
             events.add(newEvent);
             notifyItemInserted(events.size()-1);
+        }
+    }
+
+    public void changeEvents(List<BlogEvent> newEvents, int filter){
+        this.filter = filter;
+        for(BlogEvent eventToRemove : events){
+            notifyItemRemoved(events.indexOf(eventToRemove));
+            events.remove(eventToRemove);
+        }
+
+        for(BlogEvent newEvent : newEvents){
+            events.add(newEvent);
+            notifyItemInserted(events.indexOf(newEvent));
         }
     }
 

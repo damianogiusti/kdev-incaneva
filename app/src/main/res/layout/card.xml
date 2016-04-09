@@ -41,53 +41,16 @@
                 android:textColor="#fff"
                 android:textSize="25dp" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@+id/postImage"
-                android:paddingLeft="16dp"
-                android:paddingTop="8dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="2dp"
-                android:layout_alignParentStart="false"
-                android:layout_toEndOf="@+id/calendar"
-                android:id="@+id/info">
-
-                <!--<TextView-->
-                <!--android:id="@+id/blogName"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentTop="true"-->
-                <!--android:text="Johnny Bravo"-->
-                <!--android:textSize="30sp" />-->
-
-                <TextView
-                    android:id="@+id/blogName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Il più fico della città"
-                    android:textSize="10dp" />
-
-                <TextView
-                    android:id="@+id/postContent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Il più fico della città"
-                    android:textSize="12dp" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false"
                 android:layout_below="@+id/postImage"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:id="@+id/calendar"
                 android:paddingLeft="16dp"
                 android:paddingTop="16dp">
@@ -120,6 +83,50 @@
                     android:textSize="15dp" />
             </LinearLayout>
 
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/postImage"
+                android:paddingLeft="16dp"
+                android:paddingTop="8dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="2dp"
+                android:layout_alignParentStart="false"
+                android:layout_alignParentLeft="true"
+                android:layout_toEndOf="@+id/calendar"
+                android:layout_toRightOf="@+id/calendar"
+                android:id="@+id/info">
+
+                <!--<TextView-->
+                <!--android:id="@+id/blogName"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:text="Johnny Bravo"-->
+                <!--android:textSize="30sp" />-->
+
+                <TextView
+                    android:id="@+id/blogName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Il più fico della città"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/postContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Il più fico della città"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+
             <Button
                 android:id="@+id/btnMoreInfo"
                 style="@style/Base.Widget.AppCompat.Button.Borderless"
@@ -127,6 +134,7 @@
                 android:layout_height="wrap_content"
                 android:text="Più informazioni"
                 android:layout_alignParentEnd="false"
+                android:layout_alignParentRight="false"
                 android:layout_below="@+id/info" />
 
         </RelativeLayout>
