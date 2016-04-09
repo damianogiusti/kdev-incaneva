@@ -110,6 +110,7 @@ public class HomeActivity extends AppCompatActivity
                                 showEvents(blogEventList);
                             }
                         } catch (Exception e) {
+                            Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
@@ -117,6 +118,7 @@ public class HomeActivity extends AppCompatActivity
                     @Override
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
+                        Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
                         error.printStackTrace();
                     }
 
