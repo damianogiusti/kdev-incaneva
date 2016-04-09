@@ -91,19 +91,6 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
 
     }
 
-    //setta il colore dell'evento in base al filtro
-    public void setEventColor(CardViewHolder cardsHolder, int position) {
-        if (filter == R.id.nav_all) {
-            cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
-        } else {
-
-        }
-    }
-
-    public void setFilter(int filter) {
-        this.filter = filter;
-    }
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);

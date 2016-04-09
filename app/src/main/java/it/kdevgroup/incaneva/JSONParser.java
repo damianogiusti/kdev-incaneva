@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class JSONParser {
             JSONObject obj = jsonArray.getJSONObject(i);
             eventi.add(parseJsonObject(obj));
         }
+        Collections.reverse(eventi);
         return eventi;
     }
 
