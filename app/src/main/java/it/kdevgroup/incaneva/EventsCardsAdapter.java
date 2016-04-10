@@ -76,8 +76,13 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
 
         cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()));
 
-        cardHolder.hour.setText(events.get(position).getEventHour()+":"+
-                events.get(position).getEventMinute());
+
+        if(events.get(position).getEventHour().equals("")) {
+            cardHolder.hour.setText("");
+        }else{
+            cardHolder.hour.setText(events.get(position).getEventHour() + ":" +
+                    events.get(position).getEventMinute());
+        }
 
         cardHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override

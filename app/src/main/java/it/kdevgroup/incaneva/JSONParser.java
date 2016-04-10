@@ -93,7 +93,7 @@ public class JSONParser {
         blogEvent.setEndTime(obj.getLong(BlogEvent.KEY_evcal_srow));
         blogEvent.setEventMonth(obj.getString(BlogEvent.KEY_post_month_numerical));
         blogEvent.setEventDay(obj.getString(BlogEvent.KEY_post_day_numerical));
-        blogEvent.setEventHour(obj.getString(BlogEvent.KEY_post_time_hour));
+        blogEvent.setEventHour(obj.getString(BlogEvent.KEY_evcal_start_time_hour));
         blogEvent.setDayofWeek(obj.getString(BlogEvent.KEY_evcal_week_day));
         blogEvent.setEventMinute(obj.getString(BlogEvent.KEY_evcal_start_time_min));
 
