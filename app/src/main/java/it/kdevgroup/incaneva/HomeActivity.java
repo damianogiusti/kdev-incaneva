@@ -2,6 +2,7 @@ package it.kdevgroup.incaneva;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -187,6 +188,8 @@ public class HomeActivity extends AppCompatActivity
                                 @Override
                                 public void run() {
                                     swipeRefreshLayout.setRefreshing(true);
+                                    swipeRefreshLayout.setColorSchemeColors(
+                                            Color.parseColor(CategoryColorManager.getInstance().getHexColor(currentCategory)));
                                 }
                             });
                         }
