@@ -27,9 +27,10 @@ public class BlogEvent implements Parcelable {
     public static final String KEY_evcal_event_color = "evcal_event_color";
     public static final String KEY_post_month_numerical="post_month_numerical";
     public static final String KEY_post_day_numerical="post_day_numerical";
-    public static final String KEY_evcal_start_time_hour="evcal_start_time_hour";
+    public static final String KEY_post_time_hour="post_time_hour";
     public static final String KEY_evcal_week_day="evcal_week_day";
     public static final String KEY_evcal_start_time_min="evcal_start_time_min";
+    public static final String KEY_post_year="post_year";
 
 
 
@@ -51,6 +52,7 @@ public class BlogEvent implements Parcelable {
     private String eventHour;
     private String dayofWeek;
     private String eventMinute;
+    private String eventYear;
 
     public BlogEvent() {
     }
@@ -71,7 +73,8 @@ public class BlogEvent implements Parcelable {
                      String eventDay,
                      String eventHour,
                      String dayofWeek,
-                     String eventMinute) {
+                     String eventMinute,
+                     String eventYear) {
         this.ID = ID;
         this.blogName = blogName;
         this.blogNameSlug = blogNameSlug;
@@ -89,6 +92,7 @@ public class BlogEvent implements Parcelable {
         this.eventHour = eventHour;
         this.dayofWeek = dayofWeek;
         this.eventMinute = eventMinute;
+        this.eventYear = eventYear;
     }
 
 
@@ -153,6 +157,10 @@ public class BlogEvent implements Parcelable {
 
     public String getEventMinute() {
         return eventMinute;
+    }
+
+    public String getEventYear() {
+        return eventYear;
     }
 
 
@@ -226,6 +234,10 @@ public class BlogEvent implements Parcelable {
         this.eventMinute = eventMinute;
     }
 
+    public void setEventYear(String eventYear) {
+        this.eventYear = eventYear;
+    }
+
     // PARTE PER LA PARCELLIZZAZIONE
 
     @Override
@@ -252,6 +264,7 @@ public class BlogEvent implements Parcelable {
         dest.writeString(eventHour);
         dest.writeString(eventMinute);
         dest.writeString(dayofWeek);
+        dest.writeString(eventYear);
     }
 
     public final static Parcelable.Creator<BlogEvent> CREATOR = new ClassLoaderCreator<BlogEvent>() {
@@ -290,6 +303,7 @@ public class BlogEvent implements Parcelable {
         eventHour=in.readString();
         eventMinute=in.readString();
         dayofWeek=in.readString();
+        eventYear=in.readString();
     }
 
 }
