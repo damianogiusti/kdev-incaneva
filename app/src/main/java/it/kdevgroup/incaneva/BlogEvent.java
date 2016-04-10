@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.List;
  * Created by andrea on 07/04/16.
  */
 public class BlogEvent implements Parcelable {
+
+    private static final String TAG = "BlogEvent";
 
     public static final String KEY_blogname = "blogname";
     public static final String KEY_blogname_slug = "blogname_slug";
@@ -25,14 +28,12 @@ public class BlogEvent implements Parcelable {
     public static final String KEY_evcal_srow = "evcal_srow";
     public static final String KEY_evcal_erow = "evcal_erow";
     public static final String KEY_evcal_event_color = "evcal_event_color";
-    public static final String KEY_post_month_numerical="post_month_numerical";
-    public static final String KEY_post_day_numerical="post_day_numerical";
-    public static final String KEY_post_time_hour="post_time_hour";
-    public static final String KEY_evcal_week_day="evcal_week_day";
-    public static final String KEY_evcal_start_time_min="evcal_start_time_min";
-    public static final String KEY_post_year="post_year";
-
-
+    public static final String KEY_post_month_numerical = "post_month_numerical";
+    public static final String KEY_post_day_numerical = "post_day_numerical";
+    public static final String KEY_post_time_hour = "post_time_hour";
+    public static final String KEY_evcal_week_day = "evcal_week_day";
+    public static final String KEY_evcal_start_time_min = "evcal_start_time_min";
+    public static final String KEY_post_year = "post_year";
 
 
     private int ID;
@@ -99,13 +100,21 @@ public class BlogEvent implements Parcelable {
     //metodi di get
 
 
-    public int getID() { return ID; }
+    public int getID() {
+        return ID;
+    }
 
-    public String getBlogName() { return blogName; }
+    public String getBlogName() {
+        return blogName;
+    }
 
-    public String getBlogNameSlug() { return blogNameSlug; }
+    public String getBlogNameSlug() {
+        return blogNameSlug;
+    }
 
-    public String getPostTitle() { return postTitle; }
+    public String getPostTitle() {
+        return postTitle;
+    }
 
     public Spanned getPostContent() {
         return postContent;
@@ -293,17 +302,18 @@ public class BlogEvent implements Parcelable {
         postContent = Html.fromHtml(in.readString());
         categoryName = in.readString();
         categoryLink = in.readString();
+        eventType = new ArrayList<>();
         in.readStringList(eventType);
         imageLink = in.readString();
         startTime = in.readLong();
         endTime = in.readLong();
         eventColor = in.readString();
-        eventMonth=in.readString();
-        eventDay=in.readString();
-        eventHour=in.readString();
-        eventMinute=in.readString();
-        dayofWeek=in.readString();
-        eventYear=in.readString();
+        eventMonth = in.readString();
+        eventDay = in.readString();
+        eventHour = in.readString();
+        eventMinute = in.readString();
+        dayofWeek = in.readString();
+        eventYear = in.readString();
     }
 
 }

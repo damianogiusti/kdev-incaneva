@@ -10,8 +10,8 @@
         <item
             android:id="@+id/nav_nature"
             android:icon="@drawable/ic_filter_nature"
-            android:title="Natura"/>
-            //android:actionLayout="@style/" applicare sfondo al menu, inserire stile (TODO)
+            android:title="Natura" />
+        //android:actionLayout="@style/" applicare sfondo al menu, inserire stile (TODO)
 
         <item
             android:id="@+id/nav_culture"
@@ -20,8 +20,7 @@
         <item
             android:id="@+id/nav_food"
             android:icon="@drawable/ic_filter_food"
-            android:title="Enogastronomia"
-            />
+            android:title="Enogastronomia" />
         <item
             android:id="@+id/nav_sport"
             android:icon="@drawable/ic_filter_sport"

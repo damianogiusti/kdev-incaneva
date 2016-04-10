@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
         android:orderInCategory="200"
         android:title="Search"
-        android:icon="@drawable/ic_search"
-        app:showAsAction="ifRoom"
-        />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/show_old_events"
+        android:checkable="true"
         android:orderInCategory="1"
         android:title="@string/show_old_events"
-        android:checkable="true"
         app:showAsAction="never" />
 </menu>

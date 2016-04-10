@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -49,7 +50,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
      * Crea una card, chiamato ogni volta che deve essere mostrata una CardView
      *
      * @param cardHolder CardViewHolder restituito dal metodo precedente
-     * @param position    posizione di un evento nella lista
+     * @param position   posizione di un evento nella lista
      */
     @Override
     public void onBindViewHolder(CardViewHolder cardHolder, int position) {
@@ -78,13 +79,13 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
 
         cardHolder.daynumber.setText(events.get(position).getEventDay());
 
-        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth())+
-                                events.get(position).getEventYear());
+        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()) +
+                events.get(position).getEventYear());
 
 
-        if(events.get(position).getEventMinute().equals("")) {
+        if (events.get(position).getEventMinute().equals("")) {
             cardHolder.hour.setText("");
-        }else{
+        } else {
             cardHolder.hour.setText("ORE " + events.get(position).getEventHour() + ":" +
                     events.get(position).getEventMinute());
         }
@@ -109,66 +110,87 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         return events.size();
     }
 
-    public void addEvents(List<BlogEvent> eventsToAdd){
-        for(BlogEvent newEvent : eventsToAdd){
+    public void addEvents(List<BlogEvent> eventsToAdd) {
+        for (BlogEvent newEvent : eventsToAdd) {
             events.add(newEvent);
-            notifyItemInserted(events.size()-1);
+            notifyItemInserted(events.size() - 1);
         }
     }
 
-    public String dayoftheweek(String dowt){
-        String i=dowt;
+    public String dayoftheweek(String dowt) {
+        String i = dowt;
         String dayString;
-        switch (i){
-            case "1": dayString="LUN";
+        switch (i) {
+            case "1":
+                dayString = "LUN";
                 break;
-            case "2": dayString="MAR";
+            case "2":
+                dayString = "MAR";
                 break;
-            case "3": dayString="MER";
+            case "3":
+                dayString = "MER";
                 break;
-            case "4": dayString="GIO";
+            case "4":
+                dayString = "GIO";
                 break;
-            case "5": dayString="VEN";
+            case "5":
+                dayString = "VEN";
                 break;
-            case "6": dayString="SAB";
+            case "6":
+                dayString = "SAB";
                 break;
-            case "7": dayString="DOM";
+            case "7":
+                dayString = "DOM";
                 break;
-            default: dayString="";
+            default:
+                dayString = "";
         }
 
         return dayString;
     }
 
-    public String monthoftheYear(String moty){
-        String i=moty;
+    public String monthoftheYear(String moty) {
+        String i = moty;
         String monthString;
-        switch (i){
-            case "01": monthString="GENNAIO ";
+        switch (i) {
+            case "01":
+                monthString = "GENNAIO ";
                 break;
-            case "02": monthString="FEBBRAIO ";
+            case "02":
+                monthString = "FEBBRAIO ";
                 break;
-            case "03": monthString="MARZO ";
+            case "03":
+                monthString = "MARZO ";
                 break;
-            case "04": monthString="APRILE ";
+            case "04":
+                monthString = "APRILE ";
                 break;
-            case "05": monthString="MAGGIO ";
+            case "05":
+                monthString = "MAGGIO ";
                 break;
-            case "06": monthString="GIUGNO ";
+            case "06":
+                monthString = "GIUGNO ";
                 break;
-            case "07": monthString="LUGLIO ";
+            case "07":
+                monthString = "LUGLIO ";
                 break;
-            case "08": monthString="AGOSTO ";
+            case "08":
+                monthString = "AGOSTO ";
                 break;
-            case "09": monthString="SETTEMBRE ";
+            case "09":
+                monthString = "SETTEMBRE ";
                 break;
-            case "10": monthString="OTTOBRE ";
+            case "10":
+                monthString = "OTTOBRE ";
                 break;
-            case "11": monthString="NOVEMBRE ";
+            case "11":
+                monthString = "NOVEMBRE ";
                 break;
-            case "12": monthString="DICEMBRE ";
+            case "12":
+                monthString = "DICEMBRE ";
                 break;
-            default: monthString="";
+            default:
+                monthString = "";
         }
         return monthString;
     }
@@ -197,11 +219,11 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             postContent = (TextView) itemView.findViewById(R.id.postContent);
             postImage = (ImageView) itemView.findViewById(R.id.postImage);
             btnShowMore = (Button) itemView.findViewById(R.id.btnMoreInfo);
-            day=(TextView)itemView.findViewById(R.id.day);
-            month=(TextView)itemView.findViewById(R.id.event_month);
-            hour=(TextView)itemView.findViewById(R.id.event_hour);
-            daynumber=(TextView)itemView.findViewById(R.id.daynumber);
-            calendario=(LinearLayout)itemView.findViewById(R.id.calendar);
+            day = (TextView) itemView.findViewById(R.id.day);
+            month = (TextView) itemView.findViewById(R.id.event_month);
+            hour = (TextView) itemView.findViewById(R.id.event_hour);
+            daynumber = (TextView) itemView.findViewById(R.id.daynumber);
+            calendario = (LinearLayout) itemView.findViewById(R.id.calendar);
         }
     }
 

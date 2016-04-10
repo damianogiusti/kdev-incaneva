@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
@@ -134,7 +136,7 @@ public class HomeActivity extends AppCompatActivity
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
         //TODO iniziare qui il progress indicator (rotellina stile google)
-        if(!ApiCallSingleton.getInstance().isConnectionOpen()) {
+        if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
             // ESEMPIO DI CHIAMATA
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
             // http://incaneva.it/blog/category/eventi/ e aggirare il fatto che le chiamate al php
@@ -175,15 +177,15 @@ public class HomeActivity extends AppCompatActivity
     }
 
     //chiamata solo per eventi passati
-    public void loadMore(){
+    public void loadMore() {
         //controllo se c'è già una connessione attiva
-        if(!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
+        if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
             toastLookingForEvents.show();
             ApiCallSingleton.getInstance().doCall(
                     events_id,
                     "true",                                                                     //voglio vedere eventi passati
                     "6",
-                    Integer.toString((blogEventList.size() > 0) ? blogEventList.size()-1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
+                    Integer.toString((blogEventList.size() > 0) ? blogEventList.size() - 1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
                     new AsyncHttpResponseHandler() {
                         @Override
@@ -212,7 +214,7 @@ public class HomeActivity extends AppCompatActivity
                             } catch (JSONException e) {
                                 toastNoNewEvents.show();
                                 e.printStackTrace();
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
@@ -235,7 +237,8 @@ public class HomeActivity extends AppCompatActivity
 
     /**
      * Cambia la lista degli eventi
-     * @param newEvents nuova lista da mostrare
+     *
+     * @param newEvents   nuova lista da mostrare
      * @param eventFilter filtro da usare per le Card
      */
     public void showFilteredEvents(List<BlogEvent> newEvents, int eventFilter) {
@@ -274,7 +277,7 @@ public class HomeActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if(id == R.id.show_old_events) {
+        if (id == R.id.show_old_events) {
             showOldEvents = !showOldEvents;
             item.setChecked(showOldEvents);
             return true;
@@ -294,7 +297,7 @@ public class HomeActivity extends AppCompatActivity
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
             }
             //questo if è per evitare chiamate inutili se sono già su quella categoria
-            if(categoriaScelta != currentCategory) {
+            if (categoriaScelta != currentCategory) {
                 getEventsFromServer("8", null, categoryName);
                 currentCategory = categoriaScelta;
             }
