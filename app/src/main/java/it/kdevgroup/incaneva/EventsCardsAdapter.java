@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
@@ -65,22 +66,26 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         else
             cardHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
 
-        if (filter == R.id.nav_all)
+        if (filter == R.id.nav_all) {
             cardHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
-        else {
+            cardHolder.calendario.setBackgroundColor(Color.parseColor(events.get(position).getEventColor()));
+        } else {
             cardHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
+            cardHolder.calendario.setBackgroundColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
         }
 
-        cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()) +
-                events.get(position).getEventDay());
+        cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
 
-        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()));
+        cardHolder.daynumber.setText(events.get(position).getEventDay());
+
+        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth())+
+                                events.get(position).getEventYear());
 
 
-        if(events.get(position).getEventHour().equals("")) {
+        if(events.get(position).getEventMinute().equals("")) {
             cardHolder.hour.setText("");
         }else{
-            cardHolder.hour.setText(events.get(position).getEventHour() + ":" +
+            cardHolder.hour.setText("ORE " + events.get(position).getEventHour() + ":" +
                     events.get(position).getEventMinute());
         }
 
@@ -115,19 +120,19 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         String i=dowt;
         String dayString;
         switch (i){
-            case "1": dayString="LUN ";
+            case "1": dayString="LUN";
                 break;
-            case "2": dayString="MAR ";
+            case "2": dayString="MAR";
                 break;
-            case "3": dayString="MER ";
+            case "3": dayString="MER";
                 break;
-            case "4": dayString="GIO ";
+            case "4": dayString="GIO";
                 break;
-            case "5": dayString="VEN ";
+            case "5": dayString="VEN";
                 break;
-            case "6": dayString="SAB ";
+            case "6": dayString="SAB";
                 break;
-            case "7": dayString="DOM ";
+            case "7": dayString="DOM";
                 break;
             default: dayString="";
         }
@@ -139,29 +144,29 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         String i=moty;
         String monthString;
         switch (i){
-            case "01": monthString="Gennaio";
+            case "01": monthString="GENNAIO ";
                 break;
-            case "02": monthString="Febbraio";
+            case "02": monthString="FEBBRAIO ";
                 break;
-            case "03": monthString="Marzo";
+            case "03": monthString="MARZO ";
                 break;
-            case "04": monthString="Aprile";
+            case "04": monthString="APRILE ";
                 break;
-            case "05": monthString="Maggio";
+            case "05": monthString="MAGGIO ";
                 break;
-            case "06": monthString="Giugno";
+            case "06": monthString="GIUGNO ";
                 break;
-            case "07": monthString="Luglio";
+            case "07": monthString="LUGLIO ";
                 break;
-            case "08": monthString="Agosto";
+            case "08": monthString="AGOSTO ";
                 break;
-            case "09": monthString="Settembre";
+            case "09": monthString="SETTEMBRE ";
                 break;
-            case "10": monthString="Ottobre";
+            case "10": monthString="OTTOBRE ";
                 break;
-            case "11": monthString="Novembre";
+            case "11": monthString="NOVEMBRE ";
                 break;
-            case "12": monthString="Dicembre";
+            case "12": monthString="DICEMBRE ";
                 break;
             default: monthString="";
         }
@@ -181,6 +186,8 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView day;
         TextView month;
         TextView hour;
+        TextView daynumber;
+        LinearLayout calendario;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -190,9 +197,11 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             postContent = (TextView) itemView.findViewById(R.id.postContent);
             postImage = (ImageView) itemView.findViewById(R.id.postImage);
             btnShowMore = (Button) itemView.findViewById(R.id.btnMoreInfo);
-            day=(TextView)itemView.findViewById(R.id.event_day);
+            day=(TextView)itemView.findViewById(R.id.day);
             month=(TextView)itemView.findViewById(R.id.event_month);
             hour=(TextView)itemView.findViewById(R.id.event_hour);
+            daynumber=(TextView)itemView.findViewById(R.id.daynumber);
+            calendario=(LinearLayout)itemView.findViewById(R.id.calendar);
         }
     }
 
