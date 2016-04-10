@@ -37,6 +37,7 @@ public class HomeActivity extends AppCompatActivity
     private static final String TAG = "HomeActivity";
     public static final String BUNDLE_KEY_FOR_ARRAY = "listaDiEventi";
     public static final String BUNDLE_KEY_CURRENTSECTION = "sezioneNavigazioneCorrente";
+    public static final String BUNDLE_KEY_SHOWOLDEVENTS = "mostraEventiPassati";
     private final String events_id = "1,6,7,8";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
@@ -65,6 +66,7 @@ public class HomeActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
             currentCategory = savedInstanceState.getInt(BUNDLE_KEY_CURRENTSECTION);
+            showOldEvents = savedInstanceState.getBoolean(BUNDLE_KEY_SHOWOLDEVENTS);
             Log.i(TAG, "onCreate: trovati elementi nel bundle");
         }
         if (blogEventList == null) {    // se non ho trovato la lista, la istanzio da zero
@@ -349,6 +351,7 @@ public class HomeActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(BUNDLE_KEY_FOR_ARRAY, blogEventList);
         outState.putInt(BUNDLE_KEY_CURRENTSECTION, currentCategory);
+        outState.putBoolean(BUNDLE_KEY_SHOWOLDEVENTS, showOldEvents);
         Log.i(TAG, "onSaveInstanceState: salvo elementi nel bundle");
     }
 }
