@@ -4,15 +4,13 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.Iterator;
-
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -47,47 +45,48 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     }
 
     /**
-     * Setta i dati nella card
+     * Crea una card, chiamato ogni volta che deve essere mostrata una CardView
      *
-     * @param cardsHolder CardViewHolder restituito dal metodo precedente
+     * @param cardHolder CardViewHolder restituito dal metodo precedente
      * @param position    posizione di un evento nella lista
      */
     @Override
-    public void onBindViewHolder(CardViewHolder cardsHolder, int position) {
-        cardsHolder.blogName.setText(events.get(position).getBlogName());
+    public void onBindViewHolder(CardViewHolder cardHolder, int position) {
+        cardHolder.blogName.setText(events.get(position).getBlogName());
         // carico l'immagine con picasso
         Picasso.with(ctx)
                 .load(events.get(position).getImageLink())
                 .fit()
 //                .networkPolicy(NetworkPolicy.OFFLINE, NetworkPolicy.NO_CACHE)
-                .into(cardsHolder.postImage);
-        cardsHolder.postTitle.setText(events.get(position).getPostTitle());
+                .into(cardHolder.postImage);
+        cardHolder.postTitle.setText(events.get(position).getPostTitle());
         if (events.get(position).getPostContent().length() < 130)
-            cardsHolder.postContent.setText(events.get(position).getPostContent());
+            cardHolder.postContent.setText(events.get(position).getPostContent());
         else
-            cardsHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
+            cardHolder.postContent.setText(events.get(position).getPostContent().subSequence(0, 130) + "...");
 
         if (filter == R.id.nav_all)
-            cardsHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
+            cardHolder.btnShowMore.setTextColor(Color.parseColor(events.get(position).getEventColor()));
         else {
-            cardsHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
+            cardHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
         }
 
-        cardsHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()) +
+        cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()) +
                 events.get(position).getEventDay());
 
-        cardsHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()));
+        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()));
 
-        cardsHolder.hour.setText(events.get(position).getEventHour()+":"+
+        cardHolder.hour.setText(events.get(position).getEventHour()+":"+
                 events.get(position).getEventMinute());
 
-        cardsHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
+        cardHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO
             }
         });
 
+        Log.i("Adapter: ", "Card creata");
     }
 
     @Override
@@ -104,19 +103,6 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         for(BlogEvent newEvent : eventsToAdd){
             events.add(newEvent);
             notifyItemInserted(events.size()-1);
-        }
-    }
-
-    public void changeEvents(List<BlogEvent> newEvents, int filter){
-        this.filter = filter;
-        for(BlogEvent eventToRemove : events){
-            notifyItemRemoved(events.indexOf(eventToRemove));
-            events.remove(eventToRemove);
-        }
-
-        for(BlogEvent newEvent : newEvents){
-            events.add(newEvent);
-            notifyItemInserted(events.indexOf(newEvent));
         }
     }
 

@@ -81,7 +81,6 @@ public class ApiCallSingleton {
         connectionOpen = true;
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
-
     }
 
     /**

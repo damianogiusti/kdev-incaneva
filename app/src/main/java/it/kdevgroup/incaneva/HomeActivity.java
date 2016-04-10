@@ -41,7 +41,6 @@ public class HomeActivity extends AppCompatActivity
     private ArrayList<BlogEvent> blogEventList;
     private int currentCategory;
     private Snackbar internetConnection;
-    private boolean showOldEvents = true;
     private Toolbar toolbar;
     private Toast toastNoNewEvents;
     private Toast toastLookingForEvents;
@@ -61,7 +60,7 @@ public class HomeActivity extends AppCompatActivity
         if (savedInstanceState != null) {
             blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
             currentCategory = savedInstanceState.getInt(BUNDLE_KEY_CURRENTSECTION);
-            Log.d(TAG, "onCreate: trovati elementi nel bundle");
+            Log.i(TAG, "onCreate: trovati elementi nel bundle");
         }
         if (blogEventList == null) {    // se non ho trovato la lista, la istanzio da zero
             blogEventList = new ArrayList<>();
@@ -145,10 +144,11 @@ public class HomeActivity extends AppCompatActivity
                             try {
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
-                                    Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
+                                    Log.i(TAG, "onSuccess: chiamata avvenuta con successo, ");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-                                    cardsAdapter.notifyDataSetChanged();
                                     Collections.reverse(blogEventList);
+                                    Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
+                                    //cardsAdapter.changeEvents(newItems, currentCategory);
                                     showFilteredEvents(blogEventList, currentCategory);
                                 }
                             } catch (Exception e) {
@@ -177,10 +177,11 @@ public class HomeActivity extends AppCompatActivity
         //controllo se c'è già una connessione attiva
         if(!ApiCallSingleton.getInstance().isConnectionOpen()) {
             toastLookingForEvents.show();
-            ApiCallSingleton.getInstance().doCall(events_id,
+            ApiCallSingleton.getInstance().doCall(
+                    events_id,
                     "true",
                     "6",
-                    Integer.toString(blogEventList.size()-1),
+                    Integer.toString((blogEventList.size() > 0) ? blogEventList.size()-1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
                     new AsyncHttpResponseHandler() {
                         @Override
@@ -188,16 +189,17 @@ public class HomeActivity extends AppCompatActivity
                             try {
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
-                                    Log.d(TAG, "onSuccess: chiamata avvenuta con successo");
+                                    Log.i(TAG, "onSuccess: chiamata avvenuta con successo");
                                     final List<BlogEvent> newItems;
-                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) {
+                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) { //controllo se l'array nuovo non è vuoto
                                         cardsAdapter.addEvents(newItems);
-                                        Log.i("BLOGEVENTLIST DOPO", "" + blogEventList.size());
+                                        //Log.i("blogEventList more", "" + blogEventList.size());
+                                        //Log.i("more events", "" + newItems.size());
                                         recyclerView.post(new Runnable() {
                                             @Override
                                             public void run() {
                                                 //call smooth scroll
-                                                recyclerView.smoothScrollToPosition(blogEventList.size() - newItems.size());
+                                                recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
                                     } else {
@@ -206,7 +208,6 @@ public class HomeActivity extends AppCompatActivity
                                 }
                             } catch (JSONException e) {
                                 toastNoNewEvents.show();
-                                //Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show(); //lancia "End of input at character 0 of" causa probabile: stringa response vuota
                                 e.printStackTrace();
                             } catch (Exception e){
                                 e.printStackTrace();
@@ -230,13 +231,13 @@ public class HomeActivity extends AppCompatActivity
     }
 
     /**
-     * Aggiorna la lista degli eventi
-     *
-     * @param events List<> di eventi da mostrare
+     * Cambia la lista degli eventi
+     * @param newEvents nuova lista da mostrare
+     * @param eventFilter filtro da usare per le Card
      */
-    public void showFilteredEvents(List<BlogEvent> events, int eventFilter) {
-        //cardsAdapter.changeEvents(events, eventFilter);
-        cardsAdapter = new EventsCardsAdapter(events, getApplicationContext(), eventFilter);
+    public void showFilteredEvents(List<BlogEvent> newEvents, int eventFilter) {
+        //cardsAdapter.changeEvents(eventFilter);
+        cardsAdapter = new EventsCardsAdapter(newEvents, getApplicationContext(), eventFilter);
         recyclerView.swapAdapter(cardsAdapter, false);
     }
 
@@ -259,7 +260,6 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.show_old_events).setChecked(showOldEvents);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -268,14 +268,7 @@ public class HomeActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.show_old_events) {
-            showOldEvents = !showOldEvents;
-            item.setChecked(showOldEvents);
-            return true;
-        }
+        //int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
     }
@@ -291,9 +284,7 @@ public class HomeActivity extends AppCompatActivity
             if (categoryName == null) {
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
             }
-            //questo if è per aggirare un bug che, se sono sulla categoria natura ad esempio
-            //e filtro di nuovo per natura, la lista non viene popolata/l'adapter da problemi,
-            //non sono in grado di localizzare con precisione e non ho voglia a mezzanotte e mezza
+            //questo if è per evitare chiamate inutili se sono già su quella categoria
             if(categoriaScelta != currentCategory) {
                 getEventsFromServer("8", null, categoryName);
                 currentCategory = categoriaScelta;
@@ -321,6 +312,6 @@ public class HomeActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(BUNDLE_KEY_FOR_ARRAY, blogEventList);
         outState.putInt(BUNDLE_KEY_CURRENTSECTION, currentCategory);
-        Log.d(TAG, "onSaveInstanceState: salvo elementi nel bundle");
+        Log.i(TAG, "onSaveInstanceState: salvo elementi nel bundle");
     }
 }
