@@ -115,9 +115,13 @@ public class HomeActivity extends AppCompatActivity
 
         // resta in ascolto dello scorrimento della lista di card
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+                boolean enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
                 if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1) {
@@ -183,23 +187,13 @@ public class HomeActivity extends AppCompatActivity
                         @Override
                         public void onStart() {
                             super.onStart();
-                            Log.d(TAG, "onStart: ");
-                            swipeRefreshLayout.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeRefreshLayout.setRefreshing(true);
-                                    swipeRefreshLayout.setColorSchemeColors(
-                                            Color.parseColor(CategoryColorManager.getInstance().getHexColor(currentCategory)));
-                                }
-                            });
+                            showRefreshCircle(true);
                         }
 
                         @Override
                         public void onFinish() {
                             super.onFinish();
-                            Log.d(TAG, "onFinish: ");
-                            if (swipeRefreshLayout.isRefreshing())
-                                swipeRefreshLayout.setRefreshing(false);
+                            showRefreshCircle(false);
                         }
                     }
             );
@@ -259,6 +253,13 @@ public class HomeActivity extends AppCompatActivity
                         @Override
                         public void onStart() {
                             super.onStart();
+                            showRefreshCircle(true);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            super.onFinish();
+                            showRefreshCircle(false);
                         }
                     }
             );
@@ -347,6 +348,24 @@ public class HomeActivity extends AppCompatActivity
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    /**
+     * Mostra il pallino di refresh della pagina
+     * @param flag
+     */
+    private void showRefreshCircle(final boolean flag) {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(flag);
+                if (flag) {
+                    swipeRefreshLayout.setColorSchemeColors(
+                            Color.parseColor(CategoryColorManager.getInstance().getHexColor(currentCategory)));
+                }
+            }
+        });
+
     }
 
     @Override
