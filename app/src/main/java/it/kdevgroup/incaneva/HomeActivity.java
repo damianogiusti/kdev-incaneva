@@ -1,5 +1,6 @@
 package it.kdevgroup.incaneva;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -50,6 +51,7 @@ public class HomeActivity extends AppCompatActivity
     private Toolbar toolbar;
     private Snackbar snackNoNewEvents;
     private Snackbar snackLookingForEvents;
+    private Toast toastUpdateEvents;
     private boolean showOldEvents = false;
 
     @Override
@@ -79,12 +81,19 @@ public class HomeActivity extends AppCompatActivity
         snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
         snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
 
+        toastUpdateEvents=Toast.makeText(HomeActivity.this,"Aggiornamento eventi...",Toast.LENGTH_SHORT);
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // TODO
+                if (!isNetworkAvailable()) {
+                    internetConnection.show();
+                } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+                    getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
+                }
+                toastUpdateEvents.show();
             }
         });
 
