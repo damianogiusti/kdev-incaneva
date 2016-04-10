@@ -44,6 +44,7 @@ public class HomeActivity extends AppCompatActivity
     private Toolbar toolbar;
     private Toast toastNoNewEvents;
     private Toast toastLookingForEvents;
+    private boolean showOldEvents = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,8 @@ public class HomeActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        toastNoNewEvents = Toast.makeText(HomeActivity.this, "Nessun nuovo evento", Toast.LENGTH_SHORT);
-        toastLookingForEvents = Toast.makeText(HomeActivity.this, "Cerco altri eventi...", Toast.LENGTH_SHORT);
+        toastNoNewEvents = Toast.makeText(HomeActivity.this, "Nessun evento da mostrare", Toast.LENGTH_SHORT);
+        toastLookingForEvents = Toast.makeText(HomeActivity.this, "Cerco eventi passati...", Toast.LENGTH_SHORT);
 
         // recupero la lista di eventi se ho un savedInstanceState
         if (savedInstanceState != null) {
@@ -173,13 +174,14 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    //chiamata solo per eventi passati
     public void loadMore(){
         //controllo se c'è già una connessione attiva
-        if(!ApiCallSingleton.getInstance().isConnectionOpen()) {
+        if(!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
             toastLookingForEvents.show();
             ApiCallSingleton.getInstance().doCall(
                     events_id,
-                    "true",
+                    "true",                                                                     //voglio vedere eventi passati
                     "6",
                     Integer.toString((blogEventList.size() > 0) ? blogEventList.size()-1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
@@ -202,6 +204,7 @@ public class HomeActivity extends AppCompatActivity
                                                 recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
+                                        Toast.makeText(HomeActivity.this, "Eventi passati trovati", Toast.LENGTH_SHORT).show();
                                     } else {
                                         toastNoNewEvents.show();
                                     }
@@ -260,6 +263,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.show_old_events).setChecked(showOldEvents);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -268,8 +272,13 @@ public class HomeActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        //int id = item.getItemId();
+        int id = item.getItemId();
 
+        if(id == R.id.show_old_events) {
+            showOldEvents = !showOldEvents;
+            item.setChecked(showOldEvents);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

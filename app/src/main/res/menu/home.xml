@@ -8,4 +8,10 @@
         android:icon="@drawable/ic_search"
         app:showAsAction="ifRoom"
         />
+    <item
+        android:id="@+id/show_old_events"
+        android:orderInCategory="1"
+        android:title="@string/show_old_events"
+        android:checkable="true"
+        app:showAsAction="never" />
 </menu>
