@@ -27,7 +27,7 @@ public class BlogEvent implements Parcelable {
     public static final String KEY_evcal_event_color = "evcal_event_color";
     public static final String KEY_post_month_numerical="post_month_numerical";
     public static final String KEY_post_day_numerical="post_day_numerical";
-    public static final String KEY_post_time_hour="post_time_hour";
+    public static final String KEY_evcal_start_time_hour="evcal_start_time_hour";
     public static final String KEY_evcal_week_day="evcal_week_day";
     public static final String KEY_evcal_start_time_min="evcal_start_time_min";
 
