@@ -48,8 +48,8 @@ public class HomeActivity extends AppCompatActivity
     private int currentCategory;
     private Snackbar internetConnection;
     private Toolbar toolbar;
-    private Toast toastNoNewEvents;
-    private Toast toastLookingForEvents;
+    private Snackbar snackNoNewEvents;
+    private Snackbar snackLookingForEvents;
     private boolean showOldEvents = false;
 
     @Override
@@ -59,9 +59,6 @@ public class HomeActivity extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        toastNoNewEvents = Toast.makeText(HomeActivity.this, "Nessun evento da mostrare", Toast.LENGTH_SHORT);
-        toastLookingForEvents = Toast.makeText(HomeActivity.this, "Cerco eventi passati...", Toast.LENGTH_SHORT);
 
         // recupero la lista di eventi se ho un savedInstanceState
         if (savedInstanceState != null) {
@@ -78,6 +75,10 @@ public class HomeActivity extends AppCompatActivity
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
+        snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
+
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -120,6 +121,7 @@ public class HomeActivity extends AppCompatActivity
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
+                // se l'elemento visibile è il primo, allora ho la possibilità di aggiornare il contenuto
                 boolean enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
@@ -130,6 +132,8 @@ public class HomeActivity extends AppCompatActivity
             }
         });
 
+        // --- CONTROLLO CONNESSIONE DATI E CHIAMATA API
+
         if (!isNetworkAvailable()) {
             internetConnection.show();
         } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
@@ -137,6 +141,8 @@ public class HomeActivity extends AppCompatActivity
         } else if (blogEventList.size() > 0) {
             showFilteredEvents(blogEventList, currentCategory);
         }
+
+        // --- INZIALIZZAZIONE NAVIGATION DRAWER
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -204,7 +210,6 @@ public class HomeActivity extends AppCompatActivity
     public void loadMore() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
-            toastLookingForEvents.show();
             ApiCallSingleton.getInstance().doCall(
                     events_id,
                     "true",                                                                     //voglio vedere eventi passati
@@ -230,13 +235,13 @@ public class HomeActivity extends AppCompatActivity
                                                 recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
-                                        Toast.makeText(HomeActivity.this, "Eventi passati trovati", Toast.LENGTH_SHORT).show();
+//                                        Toast.makeText(HomeActivity.this, "Eventi passati trovati", Toast.LENGTH_SHORT).show();
                                     } else {
-                                        toastNoNewEvents.show();
+                                        snackNoNewEvents.show();
                                     }
                                 }
                             } catch (JSONException e) {
-                                toastNoNewEvents.show();
+                                snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -253,12 +258,14 @@ public class HomeActivity extends AppCompatActivity
                         @Override
                         public void onStart() {
                             super.onStart();
+                            snackLookingForEvents.show();
                             showRefreshCircle(true);
                         }
 
                         @Override
                         public void onFinish() {
                             super.onFinish();
+                            snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
                         }
                     }
