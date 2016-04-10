@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ public class HomeActivity extends AppCompatActivity
     private final String events_id = "1,6,7,8";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
+    private SwipeRefreshLayout swipeRefreshLayout;
     private EventsCardsAdapter cardsAdapter;
     private ArrayList<BlogEvent> blogEventList;
     private int currentCategory;
@@ -73,6 +75,14 @@ public class HomeActivity extends AppCompatActivity
         }
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // TODO
+            }
+        });
 
         /**
          * questa chiamata iniziale permette di usare swapAdapter successivamente
@@ -170,6 +180,21 @@ public class HomeActivity extends AppCompatActivity
                         @Override
                         public void onStart() {
                             super.onStart();
+                            Log.d(TAG, "onStart: ");
+                            swipeRefreshLayout.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeRefreshLayout.setRefreshing(true);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            super.onFinish();
+                            Log.d(TAG, "onFinish: ");
+                            if (swipeRefreshLayout.isRefreshing())
+                                swipeRefreshLayout.setRefreshing(false);
                         }
                     }
             );

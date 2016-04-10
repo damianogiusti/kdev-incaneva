@@ -56,6 +56,7 @@ public class BlogEvent implements Parcelable {
     private String eventYear;
 
     public BlogEvent() {
+        eventType = new ArrayList<>();
     }
 
     public BlogEvent(int ID,
