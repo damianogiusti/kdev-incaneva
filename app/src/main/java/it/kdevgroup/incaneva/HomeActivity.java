@@ -300,14 +300,12 @@ public class HomeActivity extends AppCompatActivity
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
                             ApiCallSingleton.getInstance().setConnectionClosed();
-                            /*
-                            if(cardsAdapter.getItemCount() == 0){
-                                snackNoNewEvents.show();
-                            }
-                            */
                         }
                     }
             );
+        }
+        if(cardsAdapter.getItemCount() == 0){
+            snackNoNewEvents.show();
         }
     }
 
