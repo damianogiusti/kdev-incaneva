@@ -29,6 +29,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -92,6 +93,10 @@ public class HomeActivity extends AppCompatActivity
                     internetConnection.show();
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
+                    if(recyclerView.getChildCount() == 0) {
+                        loadMore();
+                    }
+                    Log.i("children: ", ""+recyclerView.getChildCount());
                 }
                 toastUpdateEvents.show();
             }
@@ -139,7 +144,7 @@ public class HomeActivity extends AppCompatActivity
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1
+                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || blogEventList.size() == 0)
                         && !ApiCallSingleton.getInstance().isConnectionOpen()) {
                     loadMore();
                 }
@@ -227,18 +232,19 @@ public class HomeActivity extends AppCompatActivity
     public void loadMore() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
-            String offset;
-            if(blogEventList.size() > 1)    // la lista è più grande di 1?
-                offset = Integer.toString(blogEventList.size() - 1);    // skippa gli elementi già mostrati
-            else if(blogEventList.size() == 1)  // la lista è di 1? skippa l'elemento già mostrato
-                offset = "1";
-            else
-                offset = "0";   // non skippa elementi
+            int offset = 0;
+            Date today = new Date();
+            Date eventStartDate;
+            for(BlogEvent event : blogEventList){
+                eventStartDate = new Date(event.getStartTime() * 1000);
+                if(!eventStartDate.before(today))
+                    offset++;
+            }
             ApiCallSingleton.getInstance().doCall(
                     events_id,
                     "true", // voglio eventi passati
                     "6",
-                    offset,
+                    Integer.toString(offset),
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
                     new AsyncHttpResponseHandler() {
                         @Override
@@ -267,6 +273,7 @@ public class HomeActivity extends AppCompatActivity
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
+                                Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }

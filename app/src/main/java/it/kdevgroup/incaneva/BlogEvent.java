@@ -173,7 +173,6 @@ public class BlogEvent implements Parcelable {
         return eventYear;
     }
 
-
     //metodi di set
 
     public void setID(int ID) {
@@ -248,6 +247,7 @@ public class BlogEvent implements Parcelable {
         this.eventYear = eventYear;
     }
 
+
     // PARTE PER LA PARCELLIZZAZIONE
 
     @Override
@@ -316,5 +316,7 @@ public class BlogEvent implements Parcelable {
         dayofWeek = in.readString();
         eventYear = in.readString();
     }
+
+
 
 }
