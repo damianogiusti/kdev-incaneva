@@ -96,6 +96,7 @@ public class HomeActivity extends AppCompatActivity
                         internetConnection.show();
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+                    offset = 0;
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
                     if (recyclerView.getChildCount() == 0) {
                         loadMore();
@@ -180,7 +181,6 @@ public class HomeActivity extends AppCompatActivity
         Log.d(TAG, "onCreate: ");
     }
 
-
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
 
@@ -189,7 +189,7 @@ public class HomeActivity extends AppCompatActivity
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
             // http://incaneva.it/blog/category/eventi/ e aggirare il fatto che le chiamate al php
             // ritornino l'evento più recente per primo
-            ApiCallSingleton.getInstance().doCall(events_id, "false", limit, offset, eventFilter, new AsyncHttpResponseHandler() {
+            ApiCallSingleton.getInstance().doCall(events_id, "false", limit, "0", eventFilter, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             try {
@@ -228,8 +228,9 @@ public class HomeActivity extends AppCompatActivity
                         public void onFinish() {
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
-                            if (cardsAdapter.getItemCount() == 0)
-                                snackNoNewEvents.show();
+                            if (recyclerView.getChildCount() == 0) {
+                                loadMore();
+                            }
                             ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
@@ -308,6 +309,9 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
+                            if(recyclerView.getChildCount() == 0){
+                                snackNoNewEvents.show();
+                            }
                             ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
@@ -368,6 +372,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        offset = 0;
         int categoriaScelta = item.getItemId();
         boolean isNetworkAvailable = isNetworkAvailable();
         if (isNetworkAvailable) {
