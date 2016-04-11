@@ -11,8 +11,6 @@
             android:id="@+id/nav_nature"
             android:icon="@drawable/ic_filter_nature"
             android:title="Natura" />
-        //android:actionLayout="@style/" applicare sfondo al menu, inserire stile (TODO)
-
         <item
             android:id="@+id/nav_culture"
             android:icon="@drawable/ic_filter_culture"
