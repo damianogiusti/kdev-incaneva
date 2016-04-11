@@ -64,6 +64,7 @@ public class HomeActivity extends AppCompatActivity
 
         // recupero la lista di eventi se ho un savedInstanceState
         if (savedInstanceState != null) {
+            Log.i("bundle: ", "trovato");
             blogEventList = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_FOR_ARRAY);
             currentCategory = savedInstanceState.getInt(BUNDLE_KEY_CURRENTSECTION);
             showOldEvents = savedInstanceState.getBoolean(BUNDLE_KEY_SHOWOLDEVENTS);
@@ -108,7 +109,7 @@ public class HomeActivity extends AppCompatActivity
          * IMPORTANTE: CON QUESTA CHIAMATA SI LEGANO L'ADAPTER E blogEventList, CHE MODIFICANDOLA
          * CON METODI DELL'ADAPTER (addEvents) VERRÀ MODIFICATA ANCHE NELL'ACTIVITY
          */
-        cardsAdapter = new EventsCardsAdapter(blogEventList, getApplicationContext(), currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
+        cardsAdapter = new EventsCardsAdapter(blogEventList, this, currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
 
         internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
@@ -318,7 +319,7 @@ public class HomeActivity extends AppCompatActivity
      */
     public void showFilteredEvents(ArrayList<BlogEvent> newEvents, int eventFilter) {
         //cardsAdapter.changeEvents(eventFilter);
-        cardsAdapter = new EventsCardsAdapter(newEvents, getApplicationContext(), eventFilter);
+        cardsAdapter = new EventsCardsAdapter(newEvents, this, eventFilter);
         recyclerView.swapAdapter(cardsAdapter, false);
     }
 
