@@ -186,7 +186,8 @@
                 android:text="TERMINATO"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/holo_red_light"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:textStyle="italic" />
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
