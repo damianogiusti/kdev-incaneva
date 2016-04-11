@@ -53,6 +53,8 @@ public class HomeActivity extends AppCompatActivity
     private Snackbar snackLookingForEvents;
     private Toast toastUpdateEvents;
     private boolean showOldEvents = false;
+    private int offset = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,13 +241,14 @@ public class HomeActivity extends AppCompatActivity
     public void loadMore() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
-            int offset = 0;
-            Date today = new Date();
-            Date eventStartDate;
-            for (BlogEvent event : blogEventList) {
-                eventStartDate = new Date(event.getStartTime() * 1000);
-                if (!eventStartDate.before(today))
-                    offset++;
+            if(offset == 0) {
+                Date today = new Date();
+                Date eventStartDate;
+                for (BlogEvent event : blogEventList) {
+                    eventStartDate = new Date(event.getStartTime() * 1000);
+                    if (!eventStartDate.before(today))
+                        offset++;
+                }
             }
             ApiCallSingleton.getInstance().doCall(
                     events_id,
@@ -263,6 +266,7 @@ public class HomeActivity extends AppCompatActivity
                                     final List<BlogEvent> newItems;
                                     if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) { //controllo se l'array nuovo non è vuoto
                                         cardsAdapter.addEvents(newItems);
+                                        offset += newItems.size();
                                         Log.i("blogEventList more", "" + blogEventList.size());
                                         Log.i("more events", "" + newItems.size());
                                         recyclerView.post(new Runnable() {
