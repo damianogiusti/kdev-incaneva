@@ -91,7 +91,6 @@ public class ApiCallSingleton {
      * @throws Exception
      */
     public String validateResponse(String response) throws Exception {
-        connectionOpen = false;
         JSONObject object = new JSONObject(response);
         boolean success = object.getBoolean("success");
         if (success) {
@@ -106,5 +105,8 @@ public class ApiCallSingleton {
         return connectionOpen;
     }
 
+    public void setConnectionClosed(){
+        connectionOpen = false;
+    }
 
 }
