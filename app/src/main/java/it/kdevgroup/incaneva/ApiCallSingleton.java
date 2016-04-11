@@ -75,12 +75,12 @@ public class ApiCallSingleton {
             requestParams.add(offset, offsetValue);
         }
 
-        if (filterValue != null) {
+        if (filterValue != null && !filterValue.equals("eventi")) {
             requestParams.add(filter, filterValue);
         }
 
         setConnectionOpen();
-
+        Log.i("url: ",requestParams.toString());
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
     }
@@ -93,14 +93,17 @@ public class ApiCallSingleton {
      * @throws Exception
      */
     public String validateResponse(String response) throws Exception {
-        JSONObject object = new JSONObject(response);
-        boolean success = object.getBoolean("success");
-        if (success) {
-            return response;
-        } else {
-            Log.e(TAG, "onSuccess: " + object.getString("errorMessage"));
-            return null;
+        if(response.length() > 0) {     //se il limit è impostato troppo alto la risposta è completamente vuota e lancia un'eccezione poi sull'object/parser
+            JSONObject object = new JSONObject(response);
+            boolean success = object.getBoolean("success");
+            if (success) {
+                return response;
+            } else {
+                Log.e(TAG, "onSuccess: " + object.getString("errorMessage"));
+                return null;
+            }
         }
+        return null;
     }
 
     public boolean isConnectionOpen() {

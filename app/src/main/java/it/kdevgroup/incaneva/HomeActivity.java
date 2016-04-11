@@ -40,14 +40,14 @@ public class HomeActivity extends AppCompatActivity
     public static final String BUNDLE_KEY_FOR_ARRAY = "listaDiEventi";
     public static final String BUNDLE_KEY_CURRENTSECTION = "sezioneNavigazioneCorrente";
     public static final String BUNDLE_KEY_SHOWOLDEVENTS = "mostraEventiPassati";
-    private final String events_id = "1,6,7,8";
+    private final String eventsId = "1,6,7,8";
 
     private RecyclerView recyclerView;  //recycler view che conterrà le carte
     private SwipeRefreshLayout swipeRefreshLayout;
     private EventsCardsAdapter cardsAdapter;
     private ArrayList<BlogEvent> blogEventList;
     private int currentCategory;
-    private Snackbar internetConnection;
+    private Snackbar snackInternetMissing;
     private Toolbar toolbar;
     private Snackbar snackNoNewEvents;
     private Snackbar snackLookingForEvents;
@@ -83,6 +83,7 @@ public class HomeActivity extends AppCompatActivity
 
         snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
         snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
+        snackInternetMissing = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
 
         toastUpdateEvents = Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
 
@@ -92,17 +93,13 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRefresh() {
                 if (!isNetworkAvailable()) {
-                    if (!internetConnection.isShown())
-                        internetConnection.show();
+                    if (!snackInternetMissing.isShown())
+                        snackInternetMissing.show();
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-                    offset = 0;
-                    getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
-                    if (recyclerView.getChildCount() == 0) {
-                        loadMore();
-                    }
-                    if (internetConnection.isShown())
-                        internetConnection.dismiss();
+                    getEventsFromServer(CategoryColorManager.getInstance().getCategoryName(currentCategory));
+                    if (snackInternetMissing.isShown())
+                        snackInternetMissing.dismiss();
                 }
             }
         });
@@ -114,8 +111,6 @@ public class HomeActivity extends AppCompatActivity
          */
         cardsAdapter = new EventsCardsAdapter(blogEventList, this, currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
-
-        internetConnection = Snackbar.make(recyclerView, "Sei offline, Controlla la tua connessione", Snackbar.LENGTH_INDEFINITE);
 
         // --- LAYOUT MANAGER
         /*
@@ -143,24 +138,23 @@ public class HomeActivity extends AppCompatActivity
                 boolean enableRefreshCircle = true;
 
                 // se l'elemento visibile è il primo, allora ho la possibilità di aggiornare il contenuto
-                if (recyclerView != null && recyclerView.getChildCount() > 0) {
+                if (recyclerView.getChildCount() > 0) {
                     enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
                 }
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
-                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || blogEventList.size() == 0)
-                        && !ApiCallSingleton.getInstance().isConnectionOpen()) {
-                    loadMore();
+                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || recyclerView.getChildCount() == 0)) {
+                    loadOldEvents();
                 }
             }
         });
 
-        // --- CONTROLLO CONNESSIONE DATI E CHIAMATA API
+        // --- CONTROLLO CONNESSIONE DATI E CHIAMATA INIZIALE API
             if (!isNetworkAvailable()) {
-                internetConnection.show();
+                snackInternetMissing.show();
             } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-                getEventsFromServer("10", null, null);
+                getEventsFromServer(null);
             } else if (blogEventList.size() > 0) {
                 showFilteredEvents(blogEventList, currentCategory);
             }
@@ -178,18 +172,17 @@ public class HomeActivity extends AppCompatActivity
         if (navigationView != null)
             navigationView.setNavigationItemSelectedListener(this);
 
-        Log.d(TAG, "onCreate: ");
     }
 
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
-    public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
-
+    public void getEventsFromServer(final String eventFilter) {
         if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
+            offset = 0;
             // ESEMPIO DI CHIAMATA
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
             // http://incaneva.it/blog/category/eventi/ e aggirare il fatto che le chiamate al php
             // ritornino l'evento più recente per primo
-            ApiCallSingleton.getInstance().doCall(events_id, "false", limit, "0", eventFilter, new AsyncHttpResponseHandler() {
+            ApiCallSingleton.getInstance().doCall(eventsId, "false", "33", null, eventFilter, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             try {
@@ -197,11 +190,15 @@ public class HomeActivity extends AppCompatActivity
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: chiamata avvenuta con successo, ");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-
-                                    Collections.reverse(blogEventList);
-                                    Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
-                                    //cardsAdapter.changeEvents(newItems, currentCategory);
+                                    if(blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
+                                        Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
+                                        updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
+                                        //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
+                                    }
                                     showFilteredEvents(blogEventList, currentCategory);
+                                } else {
+                                    Log.i("snackbar: ","response = null in getEvents");
+                                    snackNoNewEvents.show();
                                 }
                             } catch (Exception e) {
                                 Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
@@ -214,7 +211,6 @@ public class HomeActivity extends AppCompatActivity
                                               byte[] responseBody, Throwable error) {
                             Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
                             showRefreshCircle(false);
-                            ApiCallSingleton.getInstance().setConnectionClosed();
                             error.printStackTrace();
                         }
 
@@ -228,31 +224,23 @@ public class HomeActivity extends AppCompatActivity
                         public void onFinish() {
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
-                            if (recyclerView.getChildCount() == 0) {
-                                loadMore();
-                            }
                             ApiCallSingleton.getInstance().setConnectionClosed();
+                            if (recyclerView.getChildCount() == 0 /* || se la recyclerView non può scrollare */) {
+                                loadOldEvents();
+                            }
                         }
                     }
             );
+            ApiCallSingleton.getInstance().setConnectionClosed();
         }
     }
 
     //chiamata solo per eventi passati
-    public void loadMore() {
+    public void loadOldEvents() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
-            if(offset == 0) {
-                Date today = new Date();
-                Date eventStartDate;
-                for (BlogEvent event : blogEventList) {
-                    eventStartDate = new Date(event.getStartTime() * 1000);
-                    if (!eventStartDate.before(today))
-                        offset++;
-                }
-            }
             ApiCallSingleton.getInstance().doCall(
-                    events_id,
+                    eventsId,
                     "true", // voglio eventi passati
                     "6",
                     Integer.toString(offset),
@@ -264,9 +252,9 @@ public class HomeActivity extends AppCompatActivity
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: chiamata avvenuta con successo");
-                                    final List<BlogEvent> newItems;
-                                    if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) { //controllo se l'array nuovo non è vuoto
-                                        cardsAdapter.addEvents(newItems);
+                                    final List<BlogEvent> newItems = JSONParser.getInstance().parseJsonResponse(response);
+                                    if (newItems.size() > 0) {    //controllo se l'array nuovo è vuoto
+                                        cardsAdapter.addEvents(newItems);   //aggiungo gli eventi trovati alla lista già presente
                                         offset += newItems.size();
                                         Log.i("blogEventList more", "" + blogEventList.size());
                                         Log.i("more events", "" + newItems.size());
@@ -278,10 +266,12 @@ public class HomeActivity extends AppCompatActivity
                                             }
                                         });
                                     } else {
+                                        Log.i("snackbar: ","newItems = 0 in loadMore");
                                         snackNoNewEvents.show();
                                     }
                                 }
                             } catch (JSONException e) {
+                                Log.i("snackbar: ","JSONException in loadMore()");
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
@@ -309,13 +299,15 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
+                            /*
                             if(cardsAdapter.getItemCount() == 0){
                                 snackNoNewEvents.show();
                             }
-                            ApiCallSingleton.getInstance().setConnectionClosed();
+                            */
                         }
                     }
             );
+            ApiCallSingleton.getInstance().setConnectionClosed();
         }
     }
 
@@ -329,6 +321,16 @@ public class HomeActivity extends AppCompatActivity
         //cardsAdapter.changeEvents(eventFilter);
         cardsAdapter = new EventsCardsAdapter(newEvents, this, eventFilter);
         recyclerView.swapAdapter(cardsAdapter, false);
+    }
+
+    public void updateOffset(ArrayList<BlogEvent> eventsList){
+        Date today = new Date();
+        Date eventStartDate;
+        for (BlogEvent event : eventsList) {
+            eventStartDate = new Date(event.getStartTime() * 1000);
+            if (!eventStartDate.before(today))
+                offset++;
+        }
     }
 
     @Override
@@ -364,6 +366,7 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.show_old_events) {
             showOldEvents = !showOldEvents;
             item.setChecked(showOldEvents);
+            getEventsFromServer(CategoryColorManager.getInstance().getCategoryName(currentCategory));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -372,22 +375,22 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        offset = 0;
         int categoriaScelta = item.getItemId();
         boolean isNetworkAvailable = isNetworkAvailable();
         if (isNetworkAvailable) {
-            internetConnection.dismiss();
+            snackInternetMissing.dismiss();
             String categoryName = CategoryColorManager.getInstance().getCategoryName(categoriaScelta);
             if (categoryName == null) {
                 Log.w(TAG, "onNavigationItemSelected: categoryName non trovato nella mappa");
             }
             //questo if è per evitare chiamate inutili se sono già su quella categoria
             if (categoriaScelta != currentCategory) {
-                getEventsFromServer("8", null, categoryName);
+                Log.i("categoria: ", categoryName);
+                getEventsFromServer(categoryName);
                 currentCategory = categoriaScelta;
             }
         } else {
-            internetConnection.show();
+            snackInternetMissing.show();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null)
