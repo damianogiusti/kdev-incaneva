@@ -54,7 +54,7 @@ public class HomeActivity extends AppCompatActivity
     private Toast toastUpdateEvents;
     private boolean showOldEvents = false;
     private int offset = 0;
-
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +119,6 @@ public class HomeActivity extends AppCompatActivity
         i quali quello che mi consente di stabilire qual'è l'ultimo elemento della lista completamente
         visibile. FIGATTAAA
          */
-        final LinearLayoutManager layoutManager;
         int colonne = 1;
         // se lo schermo è orizzontale, allora le colonne da utilizzare sono due
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -177,6 +176,7 @@ public class HomeActivity extends AppCompatActivity
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String eventFilter) {
         if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
+            ApiCallSingleton.getInstance().setConnectionOpen();
             offset = 0;
             // ESEMPIO DI CHIAMATA
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
@@ -188,16 +188,16 @@ public class HomeActivity extends AppCompatActivity
                             try {
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
-                                    Log.i(TAG, "onSuccess: chiamata avvenuta con successo, ");
+                                    Log.i(TAG, "onSuccess: getEventsFromServer");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
-                                    if(blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
+                                    if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
                                         Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
                                         updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
                                         //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     }
                                     showFilteredEvents(blogEventList, currentCategory);
                                 } else {
-                                    Log.i("snackbar: ","response = null in getEvents");
+                                    Log.i("snackbar: ", "response = null in getEvents");
                                     snackNoNewEvents.show();
                                 }
                             } catch (Exception e) {
@@ -225,13 +225,12 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
                             ApiCallSingleton.getInstance().setConnectionClosed();
-                            if (recyclerView.getChildCount() == 0 /* || se la recyclerView non può scrollare */) {
+                            if (recyclerView.getChildCount() == 0 || layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 /* || se la recyclerView non può scrollare */) {
                                 loadOldEvents();
                             }
                         }
                     }
             );
-            ApiCallSingleton.getInstance().setConnectionClosed();
         }
     }
 
@@ -239,6 +238,7 @@ public class HomeActivity extends AppCompatActivity
     public void loadOldEvents() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
+            ApiCallSingleton.getInstance().setConnectionOpen();
             ApiCallSingleton.getInstance().doCall(
                     eventsId,
                     "true", // voglio eventi passati
@@ -251,7 +251,7 @@ public class HomeActivity extends AppCompatActivity
                             try {
                                 String response = ApiCallSingleton.getInstance().validateResponse(new String(responseBody));
                                 if (response != null) {
-                                    Log.i(TAG, "onSuccess: chiamata avvenuta con successo");
+                                    Log.i(TAG, "onSuccess: loadOldEvents()");
                                     final List<BlogEvent> newItems = JSONParser.getInstance().parseJsonResponse(response);
                                     if (newItems.size() > 0) {    //controllo se l'array nuovo è vuoto
                                         cardsAdapter.addEvents(newItems);   //aggiungo gli eventi trovati alla lista già presente
@@ -266,12 +266,12 @@ public class HomeActivity extends AppCompatActivity
                                             }
                                         });
                                     } else {
-                                        Log.i("snackbar: ","newItems = 0 in loadMore");
+                                        Log.i("snackbar: ", "newItems = 0 in loadMore");
                                         snackNoNewEvents.show();
                                     }
                                 }
                             } catch (JSONException e) {
-                                Log.i("snackbar: ","JSONException in loadMore()");
+                                Log.i("snackbar: ", "JSONException in loadMore()");
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
@@ -299,6 +299,7 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                             /*
                             if(cardsAdapter.getItemCount() == 0){
                                 snackNoNewEvents.show();
@@ -307,7 +308,6 @@ public class HomeActivity extends AppCompatActivity
                         }
                     }
             );
-            ApiCallSingleton.getInstance().setConnectionClosed();
         }
     }
 
@@ -326,11 +326,13 @@ public class HomeActivity extends AppCompatActivity
     public void updateOffset(ArrayList<BlogEvent> eventsList){
         Date today = new Date();
         Date eventStartDate;
+        Log.i("offset prima: ",""+offset);
         for (BlogEvent event : eventsList) {
             eventStartDate = new Date(event.getStartTime() * 1000);
             if (!eventStartDate.before(today))
                 offset++;
         }
+        Log.i("offset dopo: ",""+offset);
     }
 
     @Override

@@ -79,7 +79,6 @@ public class ApiCallSingleton {
             requestParams.add(filter, filterValue);
         }
 
-        setConnectionOpen();
         Log.i("url: ",requestParams.toString());
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
@@ -111,7 +110,7 @@ public class ApiCallSingleton {
     }
 
     public void setConnectionOpen() {
-        this.connectionOpen = true;
+        connectionOpen = true;
     }
     public void setConnectionClosed(){
         connectionOpen = false;
