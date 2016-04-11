@@ -90,10 +90,11 @@ public class HomeActivity extends AppCompatActivity
             public void onRefresh() {
                 if (!isNetworkAvailable()) {
                     internetConnection.show();
+                    swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
                 }
-                toastUpdateEvents.show();
+//                toastUpdateEvents.show();
             }
         });
 
