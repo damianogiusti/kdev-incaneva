@@ -1,4 +1,4 @@
-﻿package it.kdevgroup.incaneva;
+package it.kdevgroup.incaneva;
 
 import android.content.Context;
 import android.content.Intent;

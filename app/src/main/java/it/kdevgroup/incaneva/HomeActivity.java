@@ -82,7 +82,7 @@ public class HomeActivity extends AppCompatActivity
         snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
         snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
 
-        toastUpdateEvents=Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
+        toastUpdateEvents = Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -90,16 +90,17 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRefresh() {
                 if (!isNetworkAvailable()) {
-                    internetConnection.show();
+                    if (!internetConnection.isShown())
+                        internetConnection.show();
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
                     if(recyclerView.getChildCount() == 0) {
                         loadMore();
                     }
-                    Log.i("children: ", ""+recyclerView.getChildCount());
+                    if (internetConnection.isShown())
+                        internetConnection.dismiss();
                 }
-//                toastUpdateEvents.show();
             }
         });
 
@@ -192,6 +193,7 @@ public class HomeActivity extends AppCompatActivity
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: chiamata avvenuta con successo, ");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
+
                                     Collections.reverse(blogEventList);
                                     Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     //cardsAdapter.changeEvents(newItems, currentCategory);
@@ -391,6 +393,7 @@ public class HomeActivity extends AppCompatActivity
 
     /**
      * Mostra il pallino di refresh della pagina
+     *
      * @param flag
      */
     private void showRefreshCircle(final boolean flag) {
