@@ -25,4 +25,40 @@
         android:id="@+id/txtTitle"
         android:layout_below="@+id/imgEvent"
         android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:gravity="left"
+        android:layout_below="@+id/txtTitle"
+        android:id="@+id/txtTipo"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="DescrizioneEvento"
+        android:id="@+id/txtContent"
+        android:gravity="left"
+        android:layout_below="@+id/txtTitle"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="DataInizio/DataFine"
+        android:id="@+id/txtStartEnd"
+        android:layout_below="@+id/txtContent"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Data"
+        android:id="@+id/txtData"
+        android:layout_below="@+id/txtStartEnd"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
