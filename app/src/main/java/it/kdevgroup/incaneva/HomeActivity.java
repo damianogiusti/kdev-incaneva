@@ -130,8 +130,13 @@ public class HomeActivity extends AppCompatActivity
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
+                boolean enableRefreshCircle = true;
+
                 // se l'elemento visibile è il primo, allora ho la possibilità di aggiornare il contenuto
-                boolean enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+                if (recyclerView != null && recyclerView.getChildCount() > 0) {
+                    enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
+
+                }
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
