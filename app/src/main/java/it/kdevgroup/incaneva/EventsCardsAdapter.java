@@ -57,7 +57,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
      * @param position   posizione di un evento nella lista
      */
     @Override
-    public void onBindViewHolder(CardViewHolder cardHolder, int position) {
+    public void onBindViewHolder(CardViewHolder cardHolder, final int position) {
         cardHolder.blogName.setText(events.get(position).getBlogName());
         // carico l'immagine con picasso
         Picasso.with(ctx)
@@ -106,7 +106,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             public void onClick(View v) {
                 Intent vIntent = new Intent(ctx, DetailActivity.class);
                 Bundle vBundle = new Bundle();
-                vBundle.putParcelableArrayList(HomeActivity.BUNDLE_KEY_FOR_ARRAY, events);
+                vBundle.putParcelable(HomeActivity.BUNDLE_KEY_FOR_ARRAY, events.get(position));
                 vIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 vIntent.putExtras(vBundle);
                 ctx.startActivity(vIntent);

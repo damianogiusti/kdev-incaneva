@@ -35,17 +35,17 @@ public class DetailActivity extends AppCompatActivity {
         txtStartEnd = (TextView) findViewById(R.id.txtStartEnd);
         txtData = (TextView) findViewById(R.id.txtData);
 
-        Bundle vBundle = getIntent().getBundleExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
+        BlogEvent event = getIntent().getParcelableExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
 
-        if (vBundle != null) {
+        if (event != null) {
             // imgEvent = vBundle.getString()
-            txtTitle.setText(vBundle.getString(BlogEvent.KEY_post_title));
-            txtTipo.setText(vBundle.getString(BlogEvent.KEY_event_type));
-            txtContent.setText(vBundle.getString(BlogEvent.KEY_post_content));
+            txtTitle.setText(event.getPostTitle());
+//            txtTipo.setText(event.);
+            txtContent.setText(event.getPostContent());
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyy");
-            long dataInizio = vBundle.getLong(BlogEvent.KEY_evcal_srow) * 1000;
-            long dataFine = vBundle.getLong(BlogEvent.KEY_evcal_erow) * 1000;
+            long dataInizio = event.getStartTime()* 1000;
+            long dataFine = event.getEndTime() * 1000;
 
             String dataInizioFormat = sdf.format(new Date(dataInizio));
             String dataFineFormat = sdf.format(new Date(dataFine));
