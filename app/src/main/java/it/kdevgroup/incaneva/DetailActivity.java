@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -38,7 +40,8 @@ public class DetailActivity extends AppCompatActivity {
         BlogEvent event = getIntent().getParcelableExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
 
         if (event != null) {
-            // imgEvent = vBundle.getString()
+            Picasso.with(getApplicationContext()).load(event.getImageLink()).fit().into(imgEvent);
+           // imgEvent.
             txtTitle.setText(event.getPostTitle());
 //            txtTipo.setText(event.);
             txtContent.setText(event.getPostContent());
