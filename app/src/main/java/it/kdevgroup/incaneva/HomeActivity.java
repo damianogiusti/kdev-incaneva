@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity
         snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
         snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
 
-        toastUpdateEvents=Toast.makeText(HomeActivity.this,"Aggiornamento eventi...",Toast.LENGTH_SHORT);
+        toastUpdateEvents=Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -135,7 +135,8 @@ public class HomeActivity extends AppCompatActivity
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1) {
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1
+                        && !ApiCallSingleton.getInstance().isConnectionOpen()) {
                     loadMore();
                 }
             }
@@ -167,7 +168,7 @@ public class HomeActivity extends AppCompatActivity
 
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
-        //TODO iniziare qui il progress indicator (rotellina stile google)
+
         if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
             // ESEMPIO DI CHIAMATA
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
@@ -202,13 +203,13 @@ public class HomeActivity extends AppCompatActivity
                         @Override
                         public void onStart() {
                             super.onStart();
-                            showRefreshCircle(true);
+                            showRefreshCircle(true);    // mostra rotellina caricamento
                         }
 
                         @Override
                         public void onFinish() {
                             super.onFinish();
-                            showRefreshCircle(false);
+                            showRefreshCircle(false);   // nasconde rotellina caricamento
                         }
                     }
             );

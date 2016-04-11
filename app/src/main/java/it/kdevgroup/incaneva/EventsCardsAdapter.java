@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -74,7 +75,12 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             cardHolder.btnShowMore.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
             cardHolder.calendario.setBackgroundColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(filter)));
         }
-
+        // controllo se l'evento è finito
+        Date eventEndDate = new Date(events.get(position).getEndTime() * 1000); // la data x1000 perchè vuole i ms e non i secondi
+        Date todayDate = new Date();
+        if (eventEndDate.before(todayDate)) {
+            cardHolder.txtExpired.setVisibility(View.VISIBLE);
+        }
         cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
 
         cardHolder.daynumber.setText(events.get(position).getEventDay());
@@ -199,7 +205,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
      * "Contenitore" di ogni card
      */
     public static class CardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
+        CardView card;
         TextView blogName;
         TextView postTitle;
         TextView postContent;
@@ -209,11 +215,12 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView month;
         TextView hour;
         TextView daynumber;
+        TextView txtExpired;
         LinearLayout calendario;
 
         CardViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.cardView);
+            card = (CardView) itemView.findViewById(R.id.cardView);
             blogName = (TextView) itemView.findViewById(R.id.blogName);
             postTitle = (TextView) itemView.findViewById(R.id.postTitle);
             postContent = (TextView) itemView.findViewById(R.id.postContent);
@@ -224,6 +231,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             hour = (TextView) itemView.findViewById(R.id.event_hour);
             daynumber = (TextView) itemView.findViewById(R.id.daynumber);
             calendario = (LinearLayout) itemView.findViewById(R.id.calendar);
+            txtExpired = (TextView) itemView.findViewById(R.id.txtExpired);
         }
     }
 
