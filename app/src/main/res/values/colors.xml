@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#2e2bfd</color>  <!--testo dei filtri-->
-    <color name="colorPrimaryDark">#b71c1c</color>  <!--colore toolbar-->
-    <color name="colorAccent">#4070ff</color>   <!--sfondo checkbox-->
+    <color name="colorPrimary">#bd2c16</color>
+    <color name="colorPrimaryDark">#b71c1c</color>
+    <color name="colorAccent">#4070ff</color>
 </resources>

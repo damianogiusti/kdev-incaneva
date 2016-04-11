@@ -210,6 +210,7 @@ public class HomeActivity extends AppCompatActivity
                                               byte[] responseBody, Throwable error) {
                             Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
                             showRefreshCircle(false);
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                             error.printStackTrace();
                         }
 

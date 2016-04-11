@@ -5,7 +5,9 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
 import org.json.JSONObject;
+
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -19,7 +21,6 @@ public class ApiCallSingleton {
 
     private static ApiCallSingleton ourInstance = null;
     private boolean connectionOpen = false;
-    private String result;
 
     public static ApiCallSingleton getInstance() {
         if (ourInstance == null) {
@@ -78,7 +79,8 @@ public class ApiCallSingleton {
             requestParams.add(filter, filterValue);
         }
 
-        connectionOpen = true;
+        setConnectionOpen();
+
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
     }
@@ -101,14 +103,15 @@ public class ApiCallSingleton {
         }
     }
 
-    public boolean isConnectionOpen(){
+    public boolean isConnectionOpen() {
         return connectionOpen;
     }
 
+    public void setConnectionOpen() {
+        this.connectionOpen = true;
+    }
     public void setConnectionClosed(){
         connectionOpen = false;
     }
-
-
 
 }
