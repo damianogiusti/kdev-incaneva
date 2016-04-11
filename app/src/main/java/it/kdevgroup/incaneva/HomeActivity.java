@@ -29,6 +29,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -94,6 +95,9 @@ public class HomeActivity extends AppCompatActivity
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
+                    if(recyclerView.getChildCount() == 0) {
+                        loadMore();
+                    }
                     if (internetConnection.isShown())
                         internetConnection.dismiss();
                 }
@@ -138,12 +142,11 @@ public class HomeActivity extends AppCompatActivity
                 // se l'elemento visibile è il primo, allora ho la possibilità di aggiornare il contenuto
                 if (recyclerView != null && recyclerView.getChildCount() > 0) {
                     enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
-
                 }
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1
+                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || blogEventList.size() == 0)
                         && !ApiCallSingleton.getInstance().isConnectionOpen()) {
                     loadMore();
                 }
@@ -221,6 +224,9 @@ public class HomeActivity extends AppCompatActivity
                         public void onFinish() {
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
+                            if(cardsAdapter.getItemCount() == 0)
+                                snackNoNewEvents.show();
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
             );
@@ -231,11 +237,19 @@ public class HomeActivity extends AppCompatActivity
     public void loadMore() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
+            int offset = 0;
+            Date today = new Date();
+            Date eventStartDate;
+            for(BlogEvent event : blogEventList){
+                eventStartDate = new Date(event.getStartTime() * 1000);
+                if(!eventStartDate.before(today))
+                    offset++;
+            }
             ApiCallSingleton.getInstance().doCall(
                     events_id,
-                    "true",                                                                     //voglio vedere eventi passati
+                    "true", // voglio eventi passati
                     "6",
-                    Integer.toString((blogEventList.size() > 0) ? blogEventList.size() - 1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
+                    Integer.toString(offset),
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
                     new AsyncHttpResponseHandler() {
                         @Override
@@ -247,8 +261,8 @@ public class HomeActivity extends AppCompatActivity
                                     final List<BlogEvent> newItems;
                                     if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) { //controllo se l'array nuovo non è vuoto
                                         cardsAdapter.addEvents(newItems);
-                                        //Log.i("blogEventList more", "" + blogEventList.size());
-                                        //Log.i("more events", "" + newItems.size());
+                                        Log.i("blogEventList more", "" + blogEventList.size());
+                                        Log.i("more events", "" + newItems.size());
                                         recyclerView.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -256,7 +270,6 @@ public class HomeActivity extends AppCompatActivity
                                                 recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
-//                                        Toast.makeText(HomeActivity.this, "Eventi passati trovati", Toast.LENGTH_SHORT).show();
                                     } else {
                                         snackNoNewEvents.show();
                                     }
@@ -265,6 +278,7 @@ public class HomeActivity extends AppCompatActivity
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
+                                Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }
@@ -288,6 +302,7 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
             );

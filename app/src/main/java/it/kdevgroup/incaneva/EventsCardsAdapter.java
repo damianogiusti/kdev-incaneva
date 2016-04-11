@@ -113,7 +113,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             }
         });
 
-        Log.i("Adapter: ", "Card creata");
+        //Log.i("Adapter: ", "Card creata");
     }
 
     @Override
