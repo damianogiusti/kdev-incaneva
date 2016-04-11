@@ -309,7 +309,7 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
-                            if(recyclerView.getChildCount() == 0){
+                            if(cardsAdapter.getItemCount() == 0){
                                 snackNoNewEvents.show();
                             }
                             ApiCallSingleton.getInstance().setConnectionClosed();
