@@ -209,6 +209,7 @@ public class HomeActivity extends AppCompatActivity
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
                             Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
+                            showRefreshCircle(false);
                             error.printStackTrace();
                         }
 
