@@ -50,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignEnd="@id/information"
                 android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:layout_below="@+id/postImage"
                 android:orientation="horizontal">
 
@@ -63,6 +64,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/postImage"
                     android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
                     android:orientation="vertical"
                     android:padding="12dp">
 
@@ -127,7 +129,9 @@
                     android:layout_toRightOf="@+id/calendar"
                     android:orientation="vertical"
                     android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
                     android:paddingRight="16dp"
+                    android:paddingEnd="16dp"
                     android:paddingTop="8dp">
 
                     <!--<TextView-->

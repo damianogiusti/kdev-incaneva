@@ -1,6 +1,5 @@
 package it.kdevgroup.incaneva;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -29,6 +28,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -81,7 +81,7 @@ public class HomeActivity extends AppCompatActivity
         snackNoNewEvents = Snackbar.make(recyclerView, "Nessun evento da mostrare", Snackbar.LENGTH_SHORT);
         snackLookingForEvents = Snackbar.make(recyclerView, "Cerco eventi passati...", Snackbar.LENGTH_INDEFINITE);
 
-        toastUpdateEvents=Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
+        toastUpdateEvents = Toast.makeText(HomeActivity.this, "Aggiornamento eventi...", Toast.LENGTH_SHORT);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
@@ -89,12 +89,17 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onRefresh() {
                 if (!isNetworkAvailable()) {
-                    internetConnection.show();
+                    if (!internetConnection.isShown())
+                        internetConnection.show();
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
+                    if (recyclerView.getChildCount() == 0) {
+                        loadMore();
+                    }
+                    if (internetConnection.isShown())
+                        internetConnection.dismiss();
                 }
-//                toastUpdateEvents.show();
             }
         });
 
@@ -136,12 +141,11 @@ public class HomeActivity extends AppCompatActivity
                 // se l'elemento visibile è il primo, allora ho la possibilità di aggiornare il contenuto
                 if (recyclerView != null && recyclerView.getChildCount() > 0) {
                     enableRefreshCircle = (layoutManager.findFirstCompletelyVisibleItemPosition() == 0);
-
                 }
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
                 // se è visualizzato l'ultimo elemento, chiamo il server
-                if (layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1
+                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || blogEventList.size() == 0)
                         && !ApiCallSingleton.getInstance().isConnectionOpen()) {
                     loadMore();
                 }
@@ -149,14 +153,13 @@ public class HomeActivity extends AppCompatActivity
         });
 
         // --- CONTROLLO CONNESSIONE DATI E CHIAMATA API
-
-        if (!isNetworkAvailable()) {
-            internetConnection.show();
-        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            getEventsFromServer("10", null, null);
-        } else if (blogEventList.size() > 0) {
-            showFilteredEvents(blogEventList, currentCategory);
-        }
+            if (!isNetworkAvailable()) {
+                internetConnection.show();
+            } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+                getEventsFromServer("10", null, null);
+            } else if (blogEventList.size() > 0) {
+                showFilteredEvents(blogEventList, currentCategory);
+            }
 
         // --- INZIALIZZAZIONE NAVIGATION DRAWER
 
@@ -170,7 +173,10 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null)
             navigationView.setNavigationItemSelectedListener(this);
+
+        Log.d(TAG, "onCreate: ");
     }
+
 
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
@@ -188,6 +194,7 @@ public class HomeActivity extends AppCompatActivity
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: chiamata avvenuta con successo, ");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
+
                                     Collections.reverse(blogEventList);
                                     Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     //cardsAdapter.changeEvents(newItems, currentCategory);
@@ -203,6 +210,8 @@ public class HomeActivity extends AppCompatActivity
                         public void onFailure(int statusCode, Header[] headers,
                                               byte[] responseBody, Throwable error) {
                             Snackbar.make(recyclerView, "Connessione fallita [" + statusCode + "]", Snackbar.LENGTH_LONG).show();
+                            showRefreshCircle(false);
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                             error.printStackTrace();
                         }
 
@@ -216,6 +225,9 @@ public class HomeActivity extends AppCompatActivity
                         public void onFinish() {
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
+                            if (cardsAdapter.getItemCount() == 0)
+                                snackNoNewEvents.show();
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
             );
@@ -226,11 +238,19 @@ public class HomeActivity extends AppCompatActivity
     public void loadMore() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
+            int offset = 0;
+            Date today = new Date();
+            Date eventStartDate;
+            for (BlogEvent event : blogEventList) {
+                eventStartDate = new Date(event.getStartTime() * 1000);
+                if (!eventStartDate.before(today))
+                    offset++;
+            }
             ApiCallSingleton.getInstance().doCall(
                     events_id,
-                    "true",                                                                     //voglio vedere eventi passati
+                    "true", // voglio eventi passati
                     "6",
-                    Integer.toString((blogEventList.size() > 0) ? blogEventList.size() - 1 : 0),  //ci sono eventi mostrati? se sì, l'offset è il numero di eventi già mostrati, sennò nessuno
+                    Integer.toString(offset),
                     CategoryColorManager.getInstance().getCategoryName(currentCategory),
                     new AsyncHttpResponseHandler() {
                         @Override
@@ -242,8 +262,8 @@ public class HomeActivity extends AppCompatActivity
                                     final List<BlogEvent> newItems;
                                     if ((newItems = JSONParser.getInstance().parseJsonResponse(response)).size() > 0) { //controllo se l'array nuovo non è vuoto
                                         cardsAdapter.addEvents(newItems);
-                                        //Log.i("blogEventList more", "" + blogEventList.size());
-                                        //Log.i("more events", "" + newItems.size());
+                                        Log.i("blogEventList more", "" + blogEventList.size());
+                                        Log.i("more events", "" + newItems.size());
                                         recyclerView.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -251,7 +271,6 @@ public class HomeActivity extends AppCompatActivity
                                                 recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
-//                                        Toast.makeText(HomeActivity.this, "Eventi passati trovati", Toast.LENGTH_SHORT).show();
                                     } else {
                                         snackNoNewEvents.show();
                                     }
@@ -260,6 +279,7 @@ public class HomeActivity extends AppCompatActivity
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {
+                                Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }
@@ -283,6 +303,7 @@ public class HomeActivity extends AppCompatActivity
                             super.onFinish();
                             snackLookingForEvents.dismiss();
                             showRefreshCircle(false);
+                            ApiCallSingleton.getInstance().setConnectionClosed();
                         }
                     }
             );
@@ -361,7 +382,6 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer != null)
             drawer.closeDrawer(GravityCompat.START);
-
         return isNetworkAvailable;
     }
 
@@ -375,6 +395,7 @@ public class HomeActivity extends AppCompatActivity
 
     /**
      * Mostra il pallino di refresh della pagina
+     *
      * @param flag
      */
     private void showRefreshCircle(final boolean flag) {
