@@ -1,5 +1,6 @@
 package it.kdevgroup.incaneva;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +19,7 @@ import java.util.Date;
 public class DetailActivity extends AppCompatActivity {
 
     ImageView imgEvent;
-    TextView txtTitle, txtTipo, txtContent, txtStartEnd, txtData;
+    TextView txtTitle, txtTipo, txtContent, txtStartEnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,6 @@ public class DetailActivity extends AppCompatActivity {
         txtTipo = (TextView) findViewById(R.id.txtTipo);
         txtContent = (TextView) findViewById(R.id.txtContent);
         txtStartEnd = (TextView) findViewById(R.id.txtStartEnd);
-        txtData = (TextView) findViewById(R.id.txtData);
 
         BlogEvent event = getIntent().getParcelableExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
 
@@ -43,6 +43,11 @@ public class DetailActivity extends AppCompatActivity {
             Picasso.with(getApplicationContext()).load(event.getImageLink()).fit().into(imgEvent);
            // imgEvent.
             txtTitle.setText(event.getPostTitle());
+            if(event.getEventType().get(0).equals("agenda")) {
+                txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(1))));
+            } else{
+                txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(0))));
+            }
 //            txtTipo.setText(event.);
             txtContent.setText(event.getPostContent());
 
@@ -58,7 +63,6 @@ public class DetailActivity extends AppCompatActivity {
                 txtStartEnd.setText(dataInizioFormat + " - " + dataFineFormat);
             }
             //txtStartEnd.setText();//da finire
-           // txtData.setText(vBundle.getString(BlogEvent.));
         }
 
     }

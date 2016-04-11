@@ -1,33 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="it.kdevgroup.incaneva.DetailActivity"
-    tools:showIn="@layout/activity_detail">
+    tools:showIn="@layout/activity_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e6e6e6">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
 
     <ImageView
         android:id="@+id/imgEvent"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="immagine"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="2dp" />
 
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/imgEvent"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
         android:text="Titolo"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textSize="35dp"
+        android:textColor="#ffffff"
+        android:paddingLeft="2dp"
+        android:paddingTop="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        android:textStyle="bold|italic" />
 
     <TextView
         android:id="@+id/txtTipo"
@@ -43,9 +59,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtTitle"
         android:layout_centerHorizontal="true"
-        android:gravity="left"
         android:text="DescrizioneEvento"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:paddingLeft="10dp" />
 
     <TextView
         android:id="@+id/txtStartEnd"
@@ -54,15 +72,12 @@
         android:layout_below="@+id/txtContent"
         android:layout_centerHorizontal="true"
         android:text="DataInizio/DataFine"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="10dp" />
 
-    <TextView
-        android:id="@+id/txtData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtStartEnd"
-        android:layout_centerHorizontal="true"
-        android:text="Data"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
+</ScrollView>
 
-</RelativeLayout>
