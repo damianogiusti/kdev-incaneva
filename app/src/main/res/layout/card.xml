@@ -31,12 +31,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/postImage"
+                android:layout_marginStart="2px"
+                android:layout_marginEnd="2px"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:background="@color/titleBackground"
-                android:layout_marginStart="2dp"
-                android:layout_marginEnd="2dp"
-                android:padding="10dp"
                 android:shadowColor="@android:color/background_dark"
                 android:shadowDx="3"
                 android:shadowDy="3"
@@ -44,7 +43,10 @@
                 android:text="asdasdasd"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#fff"
-                android:textSize="25dp" />
+                android:textSize="25dp"
+                android:layout_marginBottom="2dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp" />
 
 
             <LinearLayout
