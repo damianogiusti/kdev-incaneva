@@ -295,7 +295,7 @@ public class HomeActivity extends AppCompatActivity
      * @param newEvents   nuova lista da mostrare
      * @param eventFilter filtro da usare per le Card
      */
-    public void showFilteredEvents(List<BlogEvent> newEvents, int eventFilter) {
+    public void showFilteredEvents(ArrayList<BlogEvent> newEvents, int eventFilter) {
         //cardsAdapter.changeEvents(eventFilter);
         cardsAdapter = new EventsCardsAdapter(newEvents, getApplicationContext(), eventFilter);
         recyclerView.swapAdapter(cardsAdapter, false);
