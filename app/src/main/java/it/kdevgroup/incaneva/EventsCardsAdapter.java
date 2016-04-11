@@ -1,7 +1,9 @@
 package it.kdevgroup.incaneva;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,11 +27,11 @@ import java.util.List;
 
 public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.CardViewHolder> {
 
-    private List<BlogEvent> events;  //lista di eventi
+    private ArrayList<BlogEvent> events;  //lista di eventi
     private Context ctx;
     private int filter;
 
-    public EventsCardsAdapter(List<BlogEvent> events, Context ctx, int filter) {
+    public EventsCardsAdapter(ArrayList<BlogEvent> events, Context ctx, int filter) {
         this.events = events;
         this.ctx = ctx;
         this.filter = filter;
@@ -93,7 +97,12 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         cardHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO
+                Intent vIntent = new Intent(ctx, DetailActivity.class);
+                Bundle vBundle = new Bundle();
+                vBundle.putParcelableArrayList(HomeActivity.BUNDLE_KEY_FOR_ARRAY, events);
+                vIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                vIntent.putExtras(vBundle);
+                ctx.startActivity(vIntent);
             }
         });
 
