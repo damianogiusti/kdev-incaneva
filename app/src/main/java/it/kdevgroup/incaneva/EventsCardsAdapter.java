@@ -60,6 +60,9 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
     public void onBindViewHolder(CardViewHolder cardHolder, final int position) {
         cardHolder.blogName.setText(events.get(position).getBlogName());
         // carico l'immagine con picasso
+
+//        Picasso.with(ctx).setIndicatorsEnabled(true);
+
         Picasso.with(ctx)
                 .load(events.get(position).getImageLink())
                 .fit()
