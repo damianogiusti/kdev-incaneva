@@ -80,6 +80,8 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         Date todayDate = new Date();
         if (eventEndDate.before(todayDate)) {
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
+        } else {
+            cardHolder.txtExpired.setVisibility(View.GONE);
         }
         cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
 
