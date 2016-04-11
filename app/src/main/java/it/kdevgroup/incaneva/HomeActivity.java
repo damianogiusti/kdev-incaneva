@@ -1,6 +1,5 @@
 package it.kdevgroup.incaneva;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -95,7 +94,7 @@ public class HomeActivity extends AppCompatActivity
                     swipeRefreshLayout.setRefreshing(false);
                 } else {    // se non ho recuperato i dati dal bundle (o in futuro da database)
                     getEventsFromServer("10", null, CategoryColorManager.getInstance().getCategoryName(currentCategory));
-                    if(recyclerView.getChildCount() == 0) {
+                    if (recyclerView.getChildCount() == 0) {
                         loadMore();
                     }
                     if (internetConnection.isShown())
@@ -154,14 +153,13 @@ public class HomeActivity extends AppCompatActivity
         });
 
         // --- CONTROLLO CONNESSIONE DATI E CHIAMATA API
-
-        if (!isNetworkAvailable()) {
-            internetConnection.show();
-        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            getEventsFromServer("10", null, null);
-        } else if (blogEventList.size() > 0) {
-            showFilteredEvents(blogEventList, currentCategory);
-        }
+            if (!isNetworkAvailable()) {
+                internetConnection.show();
+            } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+                getEventsFromServer("10", null, null);
+            } else if (blogEventList.size() > 0) {
+                showFilteredEvents(blogEventList, currentCategory);
+            }
 
         // --- INZIALIZZAZIONE NAVIGATION DRAWER
 
@@ -175,7 +173,10 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null)
             navigationView.setNavigationItemSelectedListener(this);
+
+        Log.d(TAG, "onCreate: ");
     }
+
 
     // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
     public void getEventsFromServer(final String limit, final String offset, final String eventFilter) {
@@ -224,7 +225,7 @@ public class HomeActivity extends AppCompatActivity
                         public void onFinish() {
                             super.onFinish();
                             showRefreshCircle(false);   // nasconde rotellina caricamento
-                            if(cardsAdapter.getItemCount() == 0)
+                            if (cardsAdapter.getItemCount() == 0)
                                 snackNoNewEvents.show();
                             ApiCallSingleton.getInstance().setConnectionClosed();
                         }
@@ -240,9 +241,9 @@ public class HomeActivity extends AppCompatActivity
             int offset = 0;
             Date today = new Date();
             Date eventStartDate;
-            for(BlogEvent event : blogEventList){
+            for (BlogEvent event : blogEventList) {
                 eventStartDate = new Date(event.getStartTime() * 1000);
-                if(!eventStartDate.before(today))
+                if (!eventStartDate.before(today))
                     offset++;
             }
             ApiCallSingleton.getInstance().doCall(
