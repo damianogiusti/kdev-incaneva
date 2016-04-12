@@ -170,7 +170,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/information">
@@ -184,11 +184,10 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/information"
                     android:gravity="center_horizontal"
-                    android:paddingLeft="3pt"
-                    android:paddingRight="3pt"
                     android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textStyle="bold|italic"
                     android:visibility="gone"
-                    android:textStyle="bold|italic" />
+                    android:textSize="12dp" />
 
                 <Button
                     android:id="@+id/btnMoreInfo"
@@ -202,7 +201,7 @@
                     android:layout_toRightOf="@+id/txtExpired"
                     android:text="Più informazioni"
                     android:textStyle="bold"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
             </LinearLayout>
 
         </RelativeLayout>

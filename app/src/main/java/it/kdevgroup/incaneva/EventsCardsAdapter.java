@@ -91,10 +91,9 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
             cardHolder.txtExpired.setText("TERMINATO");
             cardHolder.txtExpired.setTextColor(Color.parseColor("#bd2c16"));
-            //cardHolder.contenuto.setForeground(ColorDrawable.createFromPath("#407c7c7c"));
         } else if (eventStartDate.before(todayDate)){
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
-            cardHolder.txtExpired.setText("IN CORSO");
+            cardHolder.txtExpired.setText("IN CORSO...");
             cardHolder.txtExpired.setTextColor(Color.parseColor("#ffcc00"));
         }
         cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
@@ -113,6 +112,18 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         }
 
         cardHolder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent vIntent = new Intent(ctx, DetailActivity.class);
+                Bundle vBundle = new Bundle();
+                vBundle.putParcelable(HomeActivity.BUNDLE_KEY_FOR_ARRAY, events.get(position));
+                vIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                vIntent.putExtras(vBundle);
+                ctx.startActivity(vIntent);
+            }
+        });
+
+        cardHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent vIntent = new Intent(ctx, DetailActivity.class);
