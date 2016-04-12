@@ -15,7 +15,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="2dp">
+            android:paddingLeft="2dp"
+            android:paddingTop="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/contenuto">
 
             <ImageView
                 android:id="@+id/postImage"
@@ -173,18 +177,16 @@
 
                 <TextView
                     android:id="@+id/txtExpired"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/btnMoreInfo"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/information"
-                    android:gravity="center_vertical"
+                    android:gravity="center_horizontal"
                     android:paddingLeft="3pt"
                     android:paddingRight="3pt"
-                    android:text="TERMINATO"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#bd2c16"
                     android:visibility="gone"
                     android:textStyle="bold|italic" />
 
@@ -199,7 +201,8 @@
                     android:layout_toEndOf="@+id/txtExpired"
                     android:layout_toRightOf="@+id/txtExpired"
                     android:text="Più informazioni"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone" />
             </LinearLayout>
 
         </RelativeLayout>

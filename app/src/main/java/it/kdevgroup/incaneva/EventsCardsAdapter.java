@@ -3,6 +3,7 @@ package it.kdevgroup.incaneva;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -83,11 +85,17 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         }
         // controllo se l'evento è finito
         Date eventEndDate = new Date(events.get(position).getEndTime() * 1000); // la data x1000 perchè vuole i ms e non i secondi
+        Date eventStartDate = new Date(events.get(position).getStartTime() * 1000);
         Date todayDate = new Date();
         if (eventEndDate.before(todayDate)) {
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
-        } else {
-            cardHolder.txtExpired.setVisibility(View.GONE);
+            cardHolder.txtExpired.setText("TERMINATO");
+            cardHolder.txtExpired.setTextColor(Color.parseColor("#bd2c16"));
+            //cardHolder.contenuto.setForeground(ColorDrawable.createFromPath("#407c7c7c"));
+        } else if (eventStartDate.before(todayDate)){
+            cardHolder.txtExpired.setVisibility(View.VISIBLE);
+            cardHolder.txtExpired.setText("IN CORSO");
+            cardHolder.txtExpired.setTextColor(Color.parseColor("#ffcc00"));
         }
         cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
 
@@ -104,7 +112,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
                     events.get(position).getEventMinute());
         }
 
-        cardHolder.btnShowMore.setOnClickListener(new View.OnClickListener() {
+        cardHolder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent vIntent = new Intent(ctx, DetailActivity.class);
@@ -230,6 +238,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
         TextView daynumber;
         TextView txtExpired;
         LinearLayout calendario;
+        RelativeLayout contenuto;
 
         CardViewHolder(View itemView) {
             super(itemView);
@@ -245,6 +254,7 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             daynumber = (TextView) itemView.findViewById(R.id.daynumber);
             calendario = (LinearLayout) itemView.findViewById(R.id.calendar);
             txtExpired = (TextView) itemView.findViewById(R.id.txtExpired);
+            contenuto = (RelativeLayout) itemView.findViewById(R.id.contenuto);
         }
     }
 
