@@ -43,7 +43,8 @@ public class DetailActivity extends AppCompatActivity {
             Picasso.with(getApplicationContext()).load(event.getImageLink()).fit().into(imgEvent);
            // imgEvent.
             txtTitle.setText(event.getPostTitle());
-            if(event.getEventType().get(0).equals("agenda")) {
+            if(event.getEventType().get(0).equals("agenda") ||
+                    event.getEventType().get(0).equals("eventi")) {
                 txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(1))));
             } else{
                 txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(0))));
