@@ -41,26 +41,27 @@ public class DetailActivity extends AppCompatActivity {
 
         if (event != null) {
             Picasso.with(getApplicationContext()).load(event.getImageLink()).fit().into(imgEvent);
-           // imgEvent.
+            // imgEvent.
             txtTitle.setText(event.getPostTitle());
-            if(event.getEventType().get(0).equals("agenda") ||
+            txtTitle.setTextColor(Color.parseColor(event.getEventColor()));
+            /*if (event.getEventType().get(0).equals("agenda") ||
                     event.getEventType().get(0).equals("eventi")) {
                 txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(1))));
-            } else{
+            } else {
                 txtTitle.setTextColor(Color.parseColor(CategoryColorManager.getInstance().getHexColor(event.getEventType().get(0))));
-            }
-//            txtTipo.setText(event.);
+            }*/
+
             txtContent.setText(event.getPostContent());
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyy");
-            long dataInizio = event.getStartTime()* 1000;
+            long dataInizio = event.getStartTime() * 1000;
             long dataFine = event.getEndTime() * 1000;
 
             String dataInizioFormat = sdf.format(new Date(dataInizio));
             String dataFineFormat = sdf.format(new Date(dataFine));
-            if (dataInizio == dataFine){
+            if (dataInizio == dataFine) {
                 txtStartEnd.setText(dataInizioFormat);
-            }else {
+            } else {
                 txtStartEnd.setText(dataInizioFormat + " - " + dataFineFormat);
             }
             //txtStartEnd.setText();//da finire
