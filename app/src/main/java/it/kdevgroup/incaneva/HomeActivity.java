@@ -31,6 +31,24 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseOptions;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.Manager;
+import com.couchbase.lite.android.AndroidContext;
+import com.couchbase.lite.auth.Authenticator;
+import com.couchbase.lite.auth.AuthenticatorFactory;
+import com.couchbase.lite.replicator.Replication;
+
+import java.io.IOException;
+
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 import cz.msebera.android.httpclient.Header;
 
 public class HomeActivity extends AppCompatActivity
@@ -55,6 +73,7 @@ public class HomeActivity extends AppCompatActivity
     private boolean showOldEvents = false;
     private int offset = 0;
     private LinearLayoutManager layoutManager;
+    private CouchBaseDB database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +130,9 @@ public class HomeActivity extends AppCompatActivity
          */
         cardsAdapter = new EventsCardsAdapter(blogEventList, this, currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
-
+        database = new CouchBaseDB(this);
+        database.createMan();
+        database.saveEvents(blogEventList);
         // --- LAYOUT MANAGER
         /*
         Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
