@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -116,9 +117,12 @@ public class HomeActivity extends AppCompatActivity
 
         // DATABASE
         database = new CouchBaseDB(getApplicationContext());
+<<<<<<< Updated upstream
 
         //database.createMan();
 
+=======
+>>>>>>> Stashed changes
 
         // --- LAYOUT MANAGER
         /*
@@ -161,7 +165,15 @@ public class HomeActivity extends AppCompatActivity
         if (!isNetworkAvailable()) {
             snackInternetMissing.show();
         } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            getEventsFromServer(null);
+            //if (database.isDatabaseEmpty())
+                getEventsFromServer(null);
+            /*else {
+                try {
+                    blogEventList = database.loadEvents();
+                } catch (CouchbaseLiteException e) {
+                    e.printStackTrace();
+                }
+            }*/
         } else if (blogEventList.size() > 0) {
             showFilteredEvents(blogEventList, currentCategory);
         }
@@ -201,12 +213,12 @@ public class HomeActivity extends AppCompatActivity
 
                                     if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
 
-
                                         Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
 
                                         database.saveEvents(blogEventList);
-        				updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
-                                        //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
+                                        updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
+
+                                        Log.i("NUOVA LISTA DA FILTRO", "scaricati eventi");
                                     }
                                     showFilteredEvents(blogEventList, currentCategory);
                                 } else {
@@ -214,7 +226,7 @@ public class HomeActivity extends AppCompatActivity
                                     snackNoNewEvents.show();
                                 }
                             } catch (Exception e) {
-                                Snackbar.make(recyclerView, e.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(recyclerView, "Oops, ci hanno segnalato che un\'invasione aliena ha reso il collegamento con i dati non funzionante!", Snackbar.LENGTH_LONG).show();
                                 e.printStackTrace();
                             }
                         }

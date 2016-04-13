@@ -321,6 +321,7 @@ public class BlogEvent implements Parcelable {
     public boolean equals(Object o) {
         if (!(o instanceof BlogEvent))
             return false;
+
         BlogEvent event = (BlogEvent) o;
 
         return ID == event.getID() &&
