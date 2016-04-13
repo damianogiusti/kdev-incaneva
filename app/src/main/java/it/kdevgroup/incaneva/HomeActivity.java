@@ -117,12 +117,6 @@ public class HomeActivity extends AppCompatActivity
 
         // DATABASE
         database = new CouchBaseDB(getApplicationContext());
-<<<<<<< Updated upstream
-
-        //database.createMan();
-
-=======
->>>>>>> Stashed changes
 
         // --- LAYOUT MANAGER
         /*
