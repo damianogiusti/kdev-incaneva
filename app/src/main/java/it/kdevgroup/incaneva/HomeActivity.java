@@ -201,17 +201,12 @@ public class HomeActivity extends AppCompatActivity
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
 
                                     if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
-<<<<<<< HEAD
-                                        Collections.reverse(blogEventList);
-                                        database.saveEvents(blogEventList);
-                                         //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
-=======
+
+
                                         Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
 
                                         database.saveEvents(blogEventList);
-                                        
->>>>>>> 34bc0d8f47ce3cb23dd7a931227c13e80f6b8b02
-                                        updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
+        				updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
                                         //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     }
                                     showFilteredEvents(blogEventList, currentCategory);

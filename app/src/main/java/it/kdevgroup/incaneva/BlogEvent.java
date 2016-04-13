@@ -317,6 +317,25 @@ public class BlogEvent implements Parcelable {
         eventYear = in.readString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BlogEvent))
+            return false;
+        BlogEvent event = (BlogEvent)o;
 
-
+        return ID == event.getID() &&
+                this.blogName.equals(event.getBlogName()) &&
+                this.blogNameSlug.equals(event.getBlogNameSlug()) &&
+                this.postTitle.equals(event.getPostTitle()) &&
+                this.postContent.equals(event.getPostContent()) &&
+                this.categoryName.equals(event.getCategoryName()) &&
+                this.categoryLink.equals(event.getCategoryLink()) &&
+                this.eventType.size() == event.getEventType().size() &&
+                this.imageLink.equals(event.getImageLink()) &&
+                this.startTime == event.getStartTime() &&
+                this.endTime == event.getEndTime() &&
+                this.eventColor.equals(event.getEventColor()) &&
+                
+                ;
+    }
 }

@@ -25,6 +25,8 @@ import java.util.Map;
  */
 public class CouchBaseDB {
 
+    private static final String TAG = "CouchBaseDB";
+
     public Manager man;
     public Database db;
     public Context cntx;
@@ -33,13 +35,13 @@ public class CouchBaseDB {
 
     public CouchBaseDB(Context c) {
         cntx = c;
-        createMan();
+        createManager();
     }
 
     /**
      * Crea il database manager
      */
-    public void createMan() {
+    public void createManager() {
         try {
             man = new Manager(new AndroidContext(cntx), Manager.DEFAULT_OPTIONS);
             Log.d("MAN Costruttore", "Manager Creato\n");
@@ -70,39 +72,56 @@ public class CouchBaseDB {
 
     }
 
-    public void saveEvents(ArrayList<BlogEvent> blogE) {
-        for (BlogEvent b : blogE) {
-            Map<String, Object> docContent = new HashMap<>();
-            docContent.put(BlogEvent.KEY_id, b.getID());
-            docContent.put(BlogEvent.KEY_blogname, b.getBlogName());
-            docContent.put(BlogEvent.KEY_blogname_slug, b.getBlogNameSlug());
-            docContent.put(BlogEvent.KEY_category_link, b.getCategoryLink());
-            docContent.put(BlogEvent.KEY_category_name, b.getCategoryName());
-            docContent.put(BlogEvent.KEY_event_type, b.getEventType());
-            docContent.put(BlogEvent.KEY_post_content, b.getPostContent());
-            docContent.put(BlogEvent.KEY_evcal_event_color, b.getEventColor());
-            docContent.put(BlogEvent.KEY_evcal_start_time_min, b.getStartTime());
-            docContent.put(BlogEvent.KEY_evcal_week_day, b.getDayofWeek());
-            docContent.put(BlogEvent.KEY_post_day_numerical, b.getEventDay());
-            docContent.put(BlogEvent.KEY_post_month_numerical, b.getEventMonth());
-            docContent.put(BlogEvent.KEY_post_time_hour, b.getEventHour());
+    private void saveEvent(BlogEvent b, Document document) throws CouchbaseLiteException {
+        Map<String, Object> docContent = new HashMap<>();
 
-            Document document = db.createDocument();
-            try {
-                    /*
-                    QueryOptions P = new QueryOptions();
-                    Map<String, Object> tutti = database.getAllDocs(P);
-                    BlogEvent all = (BlogEvent) tutti;
-                    */
+        docContent.put(BlogEvent.KEY_id, b.getID());
+        docContent.put(BlogEvent.KEY_blogname, b.getBlogName());
+        docContent.put(BlogEvent.KEY_blogname_slug, b.getBlogNameSlug());
+        docContent.put(BlogEvent.KEY_category_link, b.getCategoryLink());
+        docContent.put(BlogEvent.KEY_category_name, b.getCategoryName());
+        docContent.put(BlogEvent.KEY_event_type, b.getEventType());
+        docContent.put(BlogEvent.KEY_post_content, b.getPostContent());
+        docContent.put(BlogEvent.KEY_evcal_event_color, b.getEventColor());
+        docContent.put(BlogEvent.KEY_evcal_start_time_min, b.getStartTime());
+        docContent.put(BlogEvent.KEY_evcal_week_day, b.getDayofWeek());
+        docContent.put(BlogEvent.KEY_post_day_numerical, b.getEventDay());
+        docContent.put(BlogEvent.KEY_post_month_numerical, b.getEventMonth());
+        docContent.put(BlogEvent.KEY_post_time_hour, b.getEventHour());
+        document.putProperties(docContent);
+    }
 
-                document.putProperties(docContent);
+    /**
+     *
+     * @param blogE
+     * @throws CouchbaseLiteException
+     */
+    public void saveEvents(ArrayList<BlogEvent> blogE) throws CouchbaseLiteException {
+        for (BlogEvent blogEvent : blogE) {
+            // ottengo il documento con l'id passato, null se non esiste
+            Document document = db.getExistingDocument(String.valueOf(blogEvent.getID()));
 
-                Log.d("saveEvents()", "Documento scritto nel database " + dbname + "\n con ID = " + document.getId() + "\n");
-            } catch (CouchbaseLiteException e) {
-                Log.d("saveEvents()", "Impossibile memorizzare il documento nel database: " + e.toString());
-                e.printStackTrace();
+            // il documento esiste, valuto se sovrascriverlo
+            if (document != null) {
+                Log.d(TAG, "saveEvents: il documento esiste gia");
+                BlogEvent event = loadEvent(blogEvent.getID());
+
+                // se l'evento nuovo è diverso, sovrascrivo quello vecchio
+                if (!blogEvent.equals(event))
+                    saveEvent(blogEvent, document);
+            }
+            // il documento non esiste, lo creo e lo riempio
+            else {
+                document = db.getDocument(String.valueOf(blogEvent.getID()));
+                saveEvent(blogEvent, document);
             }
         }
+        Log.d("numero documenti", "" + db.getDocumentCount());
+    }
+
+    public BlogEvent loadEvent(int id) {
+        // TODO
+        return new BlogEvent();
     }
 
     public ArrayList<BlogEvent> loadEvents() throws CouchbaseLiteException {
