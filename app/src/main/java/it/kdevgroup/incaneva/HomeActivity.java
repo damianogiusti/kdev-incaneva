@@ -112,8 +112,14 @@ public class HomeActivity extends AppCompatActivity
          */
         cardsAdapter = new EventsCardsAdapter(blogEventList, this, currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
+
+
+        // DATABASE
         database = new CouchBaseDB(getApplicationContext());
+<<<<<<< HEAD
         //database.createMan();
+=======
+>>>>>>> 34bc0d8f47ce3cb23dd7a931227c13e80f6b8b02
 
         // --- LAYOUT MANAGER
         /*
@@ -195,9 +201,16 @@ public class HomeActivity extends AppCompatActivity
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
 
                                     if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
+<<<<<<< HEAD
                                         Collections.reverse(blogEventList);
                                         database.saveEvents(blogEventList);
                                          //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
+=======
+                                        Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
+
+                                        database.saveEvents(blogEventList);
+                                        
+>>>>>>> 34bc0d8f47ce3cb23dd7a931227c13e80f6b8b02
                                         updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
                                         //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     }
