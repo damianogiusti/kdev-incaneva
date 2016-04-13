@@ -335,7 +335,6 @@ public class BlogEvent implements Parcelable {
                 this.startTime == event.getStartTime() &&
                 this.endTime == event.getEndTime() &&
                 this.eventColor.equals(event.getEventColor())
-
                 ;
     }
 }

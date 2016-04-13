@@ -1,6 +1,7 @@
 package it.kdevgroup.incaneva;
 
 import android.content.Context;
+import android.text.Spanned;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -104,7 +105,7 @@ public class CouchBaseDB {
             // il documento esiste, valuto se sovrascriverlo
             if (document != null) {
                 Log.d(TAG, "saveEvents: il documento esiste gia");
-                BlogEvent event = loadEvent(blogEvent.getID());
+                BlogEvent event = loadSingleEvent(String.valueOf(blogEvent.getID()));
 
                 // se l'evento nuovo è diverso, sovrascrivo quello vecchio
                 if (!blogEvent.equals(event))
@@ -117,11 +118,6 @@ public class CouchBaseDB {
             }
         }
         Log.d("numero documenti", "" + db.getDocumentCount());
-    }
-
-    public BlogEvent loadEvent(int id) {
-        // TODO
-        return new BlogEvent();
     }
 
     public ArrayList<BlogEvent> loadEvents() throws CouchbaseLiteException {
@@ -138,7 +134,7 @@ public class CouchBaseDB {
             ArrayList<String> tmp = new ArrayList<>();
             tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
             b.setEventType(tmp);
-            b.setPostContent((String) doc.getProperty(BlogEvent.KEY_post_content));
+            b.setPostContent((Spanned) doc.getProperty(BlogEvent.KEY_post_content));
             b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
             b.setStartTime((Long) doc.getProperty(BlogEvent.KEY_evcal_start_time_min));
             b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
@@ -165,7 +161,7 @@ public class CouchBaseDB {
         ArrayList<String> tmp = new ArrayList<>();
         tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
         b.setEventType(tmp);
-        b.setPostContent((String) doc.getProperty(BlogEvent.KEY_post_content));
+        b.setPostContent((Spanned) doc.getProperty(BlogEvent.KEY_post_content));
         b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
         b.setStartTime((Long) doc.getProperty(BlogEvent.KEY_evcal_start_time_min));
         b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
