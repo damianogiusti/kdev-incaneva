@@ -51,7 +51,7 @@ public class CouchBaseDB {
         try {
             DatabaseOptions options = new DatabaseOptions();
             options.setCreate(true);
-            db=man.getDatabase(dbname);
+            db = man.getDatabase(dbname);
             //db = man.openDatabase(dbname, options);
 
             Log.d("DB costr", "Database creato\n");
@@ -67,7 +67,7 @@ public class CouchBaseDB {
 
     public void saveEvents(ArrayList<BlogEvent> blogE) {
         for (BlogEvent b : blogE) {
-            Map<String, Object> docContent = new HashMap<String, Object>();
+            Map<String, Object> docContent = new HashMap<>();
             docContent.put(BlogEvent.KEY_id, b.getID());
             docContent.put(BlogEvent.KEY_blogname, b.getBlogName());
             docContent.put(BlogEvent.KEY_blogname_slug, b.getBlogNameSlug());
@@ -82,7 +82,6 @@ public class CouchBaseDB {
             docContent.put(BlogEvent.KEY_post_month_numerical, b.getEventMonth());
             docContent.put(BlogEvent.KEY_post_time_hour, b.getEventHour());
 
-
             Document document = db.createDocument();
             try {
                     /*
@@ -96,6 +95,7 @@ public class CouchBaseDB {
                 Log.d("saveEvents()", "Documento scritto nel database " + dbname + "\n con ID = " + document.getId() + "\n");
             } catch (CouchbaseLiteException e) {
                 Log.d("saveEvents()", "Impossibile memorizzare il documento nel database: " + e.toString());
+                e.printStackTrace();
             }
         }
     }
