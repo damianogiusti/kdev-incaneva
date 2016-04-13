@@ -195,7 +195,7 @@ public class BlogEvent implements Parcelable {
         this.postTitle = postTitle;
     }
 
-    public void setPostContent(String postContent) {
+    public void setPostContent(Spanned postContent) {
         this.postContent = postContent;
     }
 
@@ -321,7 +321,7 @@ public class BlogEvent implements Parcelable {
     public boolean equals(Object o) {
         if (!(o instanceof BlogEvent))
             return false;
-        BlogEvent event = (BlogEvent)o;
+        BlogEvent event = (BlogEvent) o;
 
         return ID == event.getID() &&
                 this.blogName.equals(event.getBlogName()) &&
@@ -334,8 +334,8 @@ public class BlogEvent implements Parcelable {
                 this.imageLink.equals(event.getImageLink()) &&
                 this.startTime == event.getStartTime() &&
                 this.endTime == event.getEndTime() &&
-                this.eventColor.equals(event.getEventColor()) &&
-                
+                this.eventColor.equals(event.getEventColor())
+
                 ;
     }
 }
