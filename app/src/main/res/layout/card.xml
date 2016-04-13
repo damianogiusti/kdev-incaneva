@@ -28,7 +28,7 @@
                 android:contentDescription="Prova"
                 android:gravity="bottom"
                 android:paddingBottom="2dp"
-                android:textColor="#000" />
+                android:textColor="#000"/>
 
             <TextView
                 android:id="@+id/postTitle"
@@ -47,10 +47,10 @@
                 android:text="asdasdasd"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#fff"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:layout_marginBottom="2dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="10dp" />
+                android:paddingStart="5dp"
+                android:paddingEnd="10dp" />
 
 
             <LinearLayout
@@ -66,11 +66,6 @@
                     android:id="@+id/calendar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="false"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="false"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/postImage"
                     android:layout_marginLeft="2dp"
                     android:layout_marginStart="2dp"
                     android:orientation="vertical"
@@ -90,7 +85,7 @@
                             android:text="GIO"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#ffffff"
-                            android:textSize="15dp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/daynumber"
@@ -110,7 +105,7 @@
                         android:text="MESEDELLANNO"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="#ffffff"
-                        android:textSize="12dp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/event_hour"
@@ -120,7 +115,7 @@
                         android:text="ORE 00:00"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="#ffffff"
-                        android:textSize="18dp" />
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -128,13 +123,6 @@
                     android:id="@+id/info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentStart="false"
-                    android:layout_below="@+id/postImage"
-                    android:layout_toEndOf="@+id/calendar"
-                    android:layout_toRightOf="@+id/calendar"
                     android:orientation="vertical"
                     android:paddingLeft="8dp"
                     android:paddingStart="8dp"
@@ -142,21 +130,13 @@
                     android:paddingEnd="16dp"
                     android:paddingTop="8dp">
 
-                    <!--<TextView-->
-                    <!--android:id="@+id/blogName"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:text="Johnny Bravo"-->
-                    <!--android:textSize="30sp" />-->
-
                     <TextView
                         android:id="@+id/blogName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="Il più fico della città"
-                        android:textSize="10dp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/postContent"
@@ -164,7 +144,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="Il più fico della città"
-                        android:textSize="12dp" />
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -179,26 +159,17 @@
                     android:id="@+id/txtExpired"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/btnMoreInfo"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/information"
                     android:gravity="center_horizontal"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textStyle="bold|italic"
                     android:visibility="gone"
-                    android:textSize="12dp" />
+                    android:textSize="12sp" />
 
                 <Button
                     android:id="@+id/btnMoreInfo"
                     style="@style/Base.Widget.AppCompat.Button.Borderless"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/information"
-                    android:layout_toEndOf="@+id/txtExpired"
-                    android:layout_toRightOf="@+id/txtExpired"
                     android:text="Più informazioni"
                     android:textStyle="bold"
                     android:visibility="visible" />
