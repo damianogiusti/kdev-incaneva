@@ -84,27 +84,13 @@ public class CouchBaseDB {
             @Override
             public void map(Map<String, Object> document, Emitter emitter) {
                 Object obj = document.get(KEY_TYPE);
+
+                // se ho un valore corrispondente alla chiave "type", allora ho un BlogEvent
                 if (obj != null && obj.equals(VALUE_TYPE)) {
                     BlogEvent event = new BlogEvent(document);
 
-                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id));
-                    emitter.emit(VALUE_TYPE, event);
-/*
-                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id));
-                    emitter.emit(BlogEvent.KEY_blogname, document.get(BlogEvent.KEY_blogname));
-                    emitter.emit(BlogEvent.KEY_blogname_slug, document.get(BlogEvent.KEY_blogname_slug));
-                    emitter.emit(BlogEvent.KEY_category_link, document.get(BlogEvent.KEY_category_link));
-                    emitter.emit(BlogEvent.KEY_category_name, document.get(BlogEvent.KEY_category_name));
-                    emitter.emit(BlogEvent.KEY_event_type, document.get(BlogEvent.KEY_event_type));
-                    emitter.emit(BlogEvent.KEY_post_content, document.get(BlogEvent.KEY_post_content));
-                    emitter.emit(BlogEvent.KEY_evcal_event_color, document.get(BlogEvent.KEY_evcal_event_color));
-                    emitter.emit(BlogEvent.KEY_evcal_start_time_min, document.get(BlogEvent.KEY_evcal_start_time_min));
-                    emitter.emit(BlogEvent.KEY_evcal_srow, document.get(BlogEvent.KEY_evcal_srow));
-                    emitter.emit(BlogEvent.KEY_evcal_erow, document.get(BlogEvent.KEY_evcal_erow));
-                    emitter.emit(BlogEvent.KEY_evcal_week_day, document.get(BlogEvent.KEY_evcal_week_day));
-                    emitter.emit(BlogEvent.KEY_post_day_numerical, document.get(BlogEvent.KEY_post_day_numerical));
-                    emitter.emit(BlogEvent.KEY_post_month_numerical, document.get(BlogEvent.KEY_post_month_numerical));
-                    emitter.emit(BlogEvent.KEY_post_time_hour, document.get(BlogEvent.KEY_post_time_hour));*/
+                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id)); // salvo id
+                    emitter.emit(VALUE_TYPE, event);                                // salvo BlogEvent
                 }
             }
         }, "1");
@@ -113,31 +99,29 @@ public class CouchBaseDB {
     /**
      * Salva un singolo evento nel database
      *
-     * @param b
+     * @param blogEvent
      * @param document
      * @throws CouchbaseLiteException
      */
-    private void saveEvent(BlogEvent b, Document document) throws CouchbaseLiteException {
+    private void saveEvent(BlogEvent blogEvent, Document document) throws CouchbaseLiteException {
         Map<String, Object> docContent = new HashMap<>();
         if (document.getProperties() != null)
             docContent.putAll(document.getProperties());
 
         docContent.put(KEY_TYPE, VALUE_TYPE);
-        docContent.put(BlogEvent.KEY_id, b.getID());
-        docContent.put(BlogEvent.KEY_blogname, b.getBlogName());
-        docContent.put(BlogEvent.KEY_blogname_slug, b.getBlogNameSlug());
-        docContent.put(BlogEvent.KEY_category_link, b.getCategoryLink());
-        docContent.put(BlogEvent.KEY_category_name, b.getCategoryName());
-        docContent.put(BlogEvent.KEY_event_type, b.getEventType());
-        docContent.put(BlogEvent.KEY_post_content, Html.toHtml(b.getPostContent()));
-        docContent.put(BlogEvent.KEY_evcal_event_color, b.getEventColor());
-        docContent.put(BlogEvent.KEY_evcal_start_time_min, b.getStartTime());
-        docContent.put(BlogEvent.KEY_evcal_srow, b.getStartTime());
-        docContent.put(BlogEvent.KEY_evcal_erow, b.getEndTime());
-        docContent.put(BlogEvent.KEY_evcal_week_day, b.getDayofWeek());
-        docContent.put(BlogEvent.KEY_post_day_numerical, b.getEventDay());
-        docContent.put(BlogEvent.KEY_post_month_numerical, b.getEventMonth());
-        docContent.put(BlogEvent.KEY_post_time_hour, b.getEventHour());
+        docContent.put(BlogEvent.KEY_id, blogEvent.getID());
+        docContent.put(BlogEvent.KEY_blogname, blogEvent.getBlogName());
+        docContent.put(BlogEvent.KEY_post_title, blogEvent.getPostTitle());
+        docContent.put(BlogEvent.KEY_blogname_slug, blogEvent.getBlogNameSlug());
+        docContent.put(BlogEvent.KEY_category_link, blogEvent.getCategoryLink());
+        docContent.put(BlogEvent.KEY_category_name, blogEvent.getCategoryName());
+        docContent.put(BlogEvent.KEY_event_type, blogEvent.getEventType());
+        docContent.put(BlogEvent.KEY_post_content, Html.toHtml(blogEvent.getPostContent()));
+        docContent.put(BlogEvent.KEY_evcal_event_color, blogEvent.getEventColor());
+        docContent.put(BlogEvent.KEY_evcal_srow, blogEvent.getStartTime());
+        docContent.put(BlogEvent.KEY_evcal_erow, blogEvent.getEndTime());
+        docContent.put(BlogEvent.KEY_post_time_hour, blogEvent.getEventHour());
+        docContent.put(BlogEvent.KEY_post_thumbnail, blogEvent.getImageLink());
         document.putProperties(docContent);
 
     }

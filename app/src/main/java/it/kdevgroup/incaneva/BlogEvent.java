@@ -29,12 +29,12 @@ public class BlogEvent implements Parcelable {
     public static final String KEY_evcal_srow = "evcal_srow";
     public static final String KEY_evcal_erow = "evcal_erow";
     public static final String KEY_evcal_event_color = "evcal_event_color";
-    public static final String KEY_post_month_numerical = "post_month_numerical";
-    public static final String KEY_post_day_numerical = "post_day_numerical";
+    //    public static final String KEY_post_month_numerical = "post_month_numerical";
+//    public static final String KEY_post_day_numerical = "post_day_numerical";
     public static final String KEY_post_time_hour = "post_time_hour";
-    public static final String KEY_evcal_week_day = "evcal_week_day";
-    public static final String KEY_evcal_start_time_min = "evcal_start_time_min";
-    public static final String KEY_post_year = "post_year";
+//    public static final String KEY_evcal_week_day = "evcal_week_day";
+//    public static final String KEY_evcal_start_time_min = "evcal_start_time_min";
+//    public static final String KEY_post_year = "post_year";
 
 
     private int ID;
@@ -49,12 +49,12 @@ public class BlogEvent implements Parcelable {
     private long startTime;
     private long endTime;
     private String eventColor;
-    private String eventMonth;
-    private String eventDay;
+    //    private String eventMonth;
+//    private String eventDay;
     private String eventHour;
-    private String dayofWeek;
-    private String eventMinute;
-    private String eventYear;
+//    private String dayofWeek;
+//    private String eventMinute;
+//    private String eventYear;
 
     public BlogEvent() {
         eventType = new ArrayList<>();
@@ -72,12 +72,13 @@ public class BlogEvent implements Parcelable {
                      long startTime,
                      long endTime,
                      String eventColor,
-                     String eventMonth,
-                     String eventDay,
-                     String eventHour,
-                     String dayofWeek,
-                     String eventMinute,
-                     String eventYear) {
+//                     String eventMonth,
+//                     String eventDay,
+                     String eventHour
+//                     String dayofWeek,
+//                     String eventMinute,
+//                     String eventYear
+    ) {
         this.ID = ID;
         this.blogName = blogName;
         this.blogNameSlug = blogNameSlug;
@@ -90,22 +91,24 @@ public class BlogEvent implements Parcelable {
         this.startTime = startTime;
         this.endTime = endTime;
         this.eventColor = eventColor;
-        this.eventMonth = eventMonth;
-        this.eventDay = eventDay;
+//        this.eventMonth = eventMonth;
+//        this.eventDay = eventDay;
         this.eventHour = eventHour;
-        this.dayofWeek = dayofWeek;
-        this.eventMinute = eventMinute;
-        this.eventYear = eventYear;
+//        this.dayofWeek = dayofWeek;
+//        this.eventMinute = eventMinute;
+//        this.eventYear = eventYear;
     }
 
     /**
      * Costruisce un BlogEvent da una mappa chiave valore.
      * Utile per quando si va a prendere l'oggetto dal database NoSQL
+     *
      * @param map mappa chiave valore delle proprietà
      */
     public BlogEvent(Map<String, Object> map) {
         setID((Integer) map.get(BlogEvent.KEY_id));
         setBlogName((String) map.get(BlogEvent.KEY_blogname));
+        setPostTitle((String) map.get(BlogEvent.KEY_post_title));
         setBlogNameSlug((String) map.get(BlogEvent.KEY_blogname_slug));
         setCategoryLink((String) map.get(BlogEvent.KEY_category_link));
         setCategoryName((String) map.get(BlogEvent.KEY_category_name));
@@ -114,12 +117,30 @@ public class BlogEvent implements Parcelable {
         Object spanned = map.get(BlogEvent.KEY_post_content);
         setPostContent(Html.fromHtml((String) map.get(BlogEvent.KEY_post_content)));
         setEventColor((String) map.get(BlogEvent.KEY_evcal_event_color));
-        setStartTime((int) map.get(BlogEvent.KEY_evcal_srow));
-        setEndTime((int) map.get(BlogEvent.KEY_evcal_erow));
-        setDayofWeek((String) map.get(BlogEvent.KEY_evcal_week_day));
-        setEventDay((String) map.get(BlogEvent.KEY_post_day_numerical));
-        setEventMonth((String) map.get(BlogEvent.KEY_post_month_numerical));
-        setEventMinute((String) map.get(BlogEvent.KEY_post_time_hour));
+
+        /**
+         * @author damiano
+         * Questi controlli sull'istanza del dato li ho fatti perchè a volte richiedeva
+         * un cast a Integer, altre a Long. In questo modo gli do in pasto quello che vuole e non
+         * si spacca. Però bisogna fare delle ricerche e capire perchè botta.
+         */
+        Object startTime = map.get(BlogEvent.KEY_evcal_srow);
+        if (startTime instanceof Long)
+            setStartTime((long) startTime);
+        else if (startTime instanceof Integer)
+            setStartTime((int) startTime);
+
+        Object endTime = map.get(BlogEvent.KEY_evcal_erow);
+        if (endTime instanceof Long)
+            setEndTime((long) endTime);
+        else if (endTime instanceof Integer)
+            setEndTime((int) endTime);
+
+        setImageLink((String) map.get(BlogEvent.KEY_post_thumbnail));
+//        setDayofWeek((String) map.get(BlogEvent.KEY_evcal_week_day));
+//        setEventDay((String) map.get(BlogEvent.KEY_post_day_numerical));
+//        setEventMonth((String) map.get(BlogEvent.KEY_post_month_numerical));
+//        setEventMinute((String) map.get(BlogEvent.KEY_post_time_hour));
     }
 
     //metodi di get
@@ -173,29 +194,29 @@ public class BlogEvent implements Parcelable {
         return eventColor;
     }
 
-    public String getEventMonth() {
-        return eventMonth;
-    }
-
-    public String getEventDay() {
-        return eventDay;
-    }
+//    public String getEventMonth() {
+//        return eventMonth;
+//    }
+//
+//    public String getEventDay() {
+//        return eventDay;
+//    }
 
     public String getEventHour() {
         return eventHour;
     }
 
-    public String getDayofWeek() {
-        return dayofWeek;
-    }
-
-    public String getEventMinute() {
-        return eventMinute;
-    }
-
-    public String getEventYear() {
-        return eventYear;
-    }
+//    public String getDayofWeek() {
+//        return dayofWeek;
+//    }
+//
+//    public String getEventMinute() {
+//        return eventMinute;
+//    }
+//
+//    public String getEventYear() {
+//        return eventYear;
+//    }
 
     //metodi di set
 
@@ -247,29 +268,29 @@ public class BlogEvent implements Parcelable {
         this.eventColor = eventColor;
     }
 
-    public void setEventMonth(String eventMonth) {
-        this.eventMonth = eventMonth;
-    }
-
-    public void setEventDay(String eventDay) {
-        this.eventDay = eventDay;
-    }
+//    public void setEventMonth(String eventMonth) {
+//        this.eventMonth = eventMonth;
+//    }
+//
+//    public void setEventDay(String eventDay) {
+//        this.eventDay = eventDay;
+//    }
 
     public void setEventHour(String eventHour) {
         this.eventHour = eventHour;
     }
 
-    public void setDayofWeek(String dayofWeek) {
-        this.dayofWeek = dayofWeek;
-    }
-
-    public void setEventMinute(String eventMinute) {
-        this.eventMinute = eventMinute;
-    }
-
-    public void setEventYear(String eventYear) {
-        this.eventYear = eventYear;
-    }
+//    public void setDayofWeek(String dayofWeek) {
+//        this.dayofWeek = dayofWeek;
+//    }
+//
+//    public void setEventMinute(String eventMinute) {
+//        this.eventMinute = eventMinute;
+//    }
+//
+//    public void setEventYear(String eventYear) {
+//        this.eventYear = eventYear;
+//    }
 
 
     // PARTE PER LA PARCELLIZZAZIONE
@@ -293,12 +314,12 @@ public class BlogEvent implements Parcelable {
         dest.writeLong(startTime);
         dest.writeLong(endTime);
         dest.writeString(eventColor);
-        dest.writeString(eventMonth);
-        dest.writeString(eventDay);
+//        dest.writeString(eventMonth);
+//        dest.writeString(eventDay);
         dest.writeString(eventHour);
-        dest.writeString(eventMinute);
-        dest.writeString(dayofWeek);
-        dest.writeString(eventYear);
+//        dest.writeString(eventMinute);
+//        dest.writeString(dayofWeek);
+//        dest.writeString(eventYear);
     }
 
     public final static Parcelable.Creator<BlogEvent> CREATOR = new ClassLoaderCreator<BlogEvent>() {
@@ -333,12 +354,12 @@ public class BlogEvent implements Parcelable {
         startTime = in.readLong();
         endTime = in.readLong();
         eventColor = in.readString();
-        eventMonth = in.readString();
-        eventDay = in.readString();
+//        eventMonth = in.readString();
+//        eventDay = in.readString();
         eventHour = in.readString();
-        eventMinute = in.readString();
-        dayofWeek = in.readString();
-        eventYear = in.readString();
+//        eventMinute = in.readString();
+//        dayofWeek = in.readString();
+//        eventYear = in.readString();
     }
 
     @Override

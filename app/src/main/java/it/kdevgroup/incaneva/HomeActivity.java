@@ -156,14 +156,18 @@ public class HomeActivity extends AppCompatActivity
         });
 
         // --- CONTROLLO CONNESSIONE DATI E CHIAMATA INIZIALE API
-        if (!isNetworkAvailable()) {
-            snackInternetMissing.show();
-        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            if (database.isDatabaseEmpty())
-                getEventsFromServer(null);
-            else {
+
+        if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+            if (database.isDatabaseEmpty()) {
+                if (!isNetworkAvailable()) {
+                    snackInternetMissing.show();
+                } else {
+                    getEventsFromServer(null);
+                }
+            } else {
                 try {
                     blogEventList = database.loadEvents();
+                    showFilteredEvents(blogEventList, currentCategory);
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();
                 }

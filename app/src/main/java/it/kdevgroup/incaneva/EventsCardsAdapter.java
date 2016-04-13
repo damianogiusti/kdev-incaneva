@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -91,26 +92,37 @@ public class EventsCardsAdapter extends RecyclerView.Adapter<EventsCardsAdapter.
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
             cardHolder.txtExpired.setText("TERMINATO");
             cardHolder.txtExpired.setTextColor(Color.parseColor("#bd2c16"));
-        } else if (eventStartDate.before(todayDate)){
+        } else if (eventStartDate.before(todayDate)) {
             cardHolder.txtExpired.setVisibility(View.VISIBLE);
             cardHolder.txtExpired.setText("IN CORSO...");
             cardHolder.txtExpired.setTextColor(Color.parseColor("#ffcc00"));
         }
-        cardHolder.day.setText(dayoftheweek(events.get(position).getDayofWeek()));
 
-        cardHolder.daynumber.setText(events.get(position).getEventDay());
+        Date date = new Date(events.get(position).getStartTime() * 1000);
 
-        cardHolder.month.setText(monthoftheYear(events.get(position).getEventMonth()) +
-                events.get(position).getEventYear());
+        // es. LUNEDI
+        SimpleDateFormat dayofweekFormatter = new SimpleDateFormat("EEE", ctx.getResources().getConfiguration().locale);
+        cardHolder.day.setText(dayofweekFormatter.format(date).toUpperCase());
 
+        // es. 01
+        SimpleDateFormat daynumberFormatter = new SimpleDateFormat("dd", ctx.getResources().getConfiguration().locale);
+        cardHolder.daynumber.setText(daynumberFormatter.format(date));
 
+        // es. FEBBRAIO 2016
+        SimpleDateFormat monthYearFormatter = new SimpleDateFormat("MMMM yyyy", ctx.getResources().getConfiguration().locale);
+        cardHolder.month.setText(monthYearFormatter.format(date).toUpperCase());
+
+        // es. ORE 1:00
+        SimpleDateFormat hoursFormatter = new SimpleDateFormat("H:ss", ctx.getResources().getConfiguration().locale);
+        cardHolder.hour.setText("ORE " + hoursFormatter.format(date));
+        /*
         if (events.get(position).getEventMinute().equals("")) {
             cardHolder.hour.setText("");
         } else {
             cardHolder.hour.setText("ORE " + events.get(position).getEventHour() + ":" +
                     events.get(position).getEventMinute());
         }
-
+*/
         cardHolder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
