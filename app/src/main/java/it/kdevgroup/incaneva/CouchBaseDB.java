@@ -10,9 +10,14 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,7 +56,7 @@ public class CouchBaseDB {
         try {
             DatabaseOptions options = new DatabaseOptions();
             options.setCreate(true);
-            db=man.getDatabase(dbname);
+            db = man.getDatabase(dbname);
             //db = man.openDatabase(dbname, options);
 
             Log.d("DB costr", "Database creato\n");
@@ -102,12 +107,54 @@ public class CouchBaseDB {
 
     public ArrayList<BlogEvent> loadEvents() throws CouchbaseLiteException {
         Map<String, Object> tutto = db.getAllDocs(null);
-        /*
-        Map<String, Object> documento = retrievedDocument.getProperties();
-        Log.d(TAG, ""+documento.get("KEY_id"));
-         */
+        ArrayList<BlogEvent> eventi = new ArrayList<BlogEvent>();
+        for (String id : tutto.keySet()) {
+            Document doc = (Document) tutto.get(id);
+            BlogEvent b = new BlogEvent();
+            b.setID((Integer) doc.getProperty(BlogEvent.KEY_id));
+            b.setBlogName((String) doc.getProperty(BlogEvent.KEY_blogname));
+            b.setBlogNameSlug((String) doc.getProperty(BlogEvent.KEY_blogname_slug));
+            b.setCategoryLink((String) doc.getProperty(BlogEvent.KEY_category_link));
+            b.setCategoryName((String) doc.getProperty(BlogEvent.KEY_category_name));
+            ArrayList<String> tmp = new ArrayList<>();
+            tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
+            b.setEventType(tmp);
+            b.setPostContent((String) doc.getProperty(BlogEvent.KEY_post_content));
+            b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
+            b.setStartTime((Long) doc.getProperty(BlogEvent.KEY_evcal_start_time_min));
+            b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
+            b.setEventDay((String) doc.getProperty(BlogEvent.KEY_post_day_numerical));
+            b.setEventMonth((String) doc.getProperty(BlogEvent.KEY_post_month_numerical));
+            b.setEventMinute((String) doc.getProperty(BlogEvent.KEY_post_time_hour));
+            Log.d("loadEvents", "caricato evento con id" + doc.getProperty(BlogEvent.KEY_id));
+            eventi.add(b);
+            }
 
-        return null;
+            return eventi;
+
     }
 
+    public BlogEvent loadSingleEvent(String id) throws CouchbaseLiteException {
+        Map<String, Object> tutto = db.getAllDocs(null);
+        Document doc = (Document) tutto.get(id);
+        BlogEvent b = new BlogEvent();
+        b.setID((Integer) doc.getProperty(BlogEvent.KEY_id));
+        b.setBlogName((String) doc.getProperty(BlogEvent.KEY_blogname));
+        b.setBlogNameSlug((String) doc.getProperty(BlogEvent.KEY_blogname_slug));
+        b.setCategoryLink((String) doc.getProperty(BlogEvent.KEY_category_link));
+        b.setCategoryName((String) doc.getProperty(BlogEvent.KEY_category_name));
+        ArrayList<String> tmp = new ArrayList<>();
+        tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
+        b.setEventType(tmp);
+        b.setPostContent((String) doc.getProperty(BlogEvent.KEY_post_content));
+        b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
+        b.setStartTime((Long) doc.getProperty(BlogEvent.KEY_evcal_start_time_min));
+        b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
+        b.setEventDay((String) doc.getProperty(BlogEvent.KEY_post_day_numerical));
+        b.setEventMonth((String) doc.getProperty(BlogEvent.KEY_post_month_numerical));
+        b.setEventMinute((String) doc.getProperty(BlogEvent.KEY_post_time_hour));
+        Log.d("loadEvents","caricato evento con id"+doc.getProperty(BlogEvent.KEY_id));
+        return b;
+    }
 }
+

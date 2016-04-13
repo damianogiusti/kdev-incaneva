@@ -195,7 +195,7 @@ public class BlogEvent implements Parcelable {
         this.postTitle = postTitle;
     }
 
-    public void setPostContent(Spanned postContent) {
+    public void setPostContent(String postContent) {
         this.postContent = postContent;
     }
 

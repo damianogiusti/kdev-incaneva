@@ -114,7 +114,7 @@ public class HomeActivity extends AppCompatActivity
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
         database = new CouchBaseDB(getApplicationContext());
         //database.createMan();
-        database.saveEvents(blogEventList);
+
         // --- LAYOUT MANAGER
         /*
         Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
@@ -193,8 +193,11 @@ public class HomeActivity extends AppCompatActivity
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: getEventsFromServer");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
+
                                     if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
-                                        Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
+                                        Collections.reverse(blogEventList);
+                                        database.saveEvents(blogEventList);
+                                         //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
                                         updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
                                         //Log.i("NUOVA LISTA DA FILTRO", "" + blogEventList.size());
                                     }
