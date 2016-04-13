@@ -119,11 +119,12 @@ public class HomeActivity extends AppCompatActivity
         database = new CouchBaseDB(getApplicationContext());
 
         // --- LAYOUT MANAGER
-        /*
-        Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
-        come Linear ma lo istanzio come Grid, per poter avere disponibili i metodi del Linear, tra
-        i quali quello che mi consente di stabilire qual'è l'ultimo elemento della lista completamente
-        visibile. FIGATTAAA
+        /**
+         * @author damiano
+         * Qui gioco di cast. GridLayoutManager eredita da LinearLayoutManager, quindi lo dichiaro
+         * come Linear ma lo istanzio come Grid, per poter avere disponibili i metodi del Linear, tra
+         * i quali quello che mi consente di stabilire qual'è l'ultimo elemento della lista completamente
+         * visibile. FIGATTAAA
          */
         int colonne = 1;
         // se lo schermo è orizzontale, allora le colonne da utilizzare sono due
@@ -191,7 +192,11 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    // metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
+    /**
+     * metodo per ripetere la chiamata personalizzando i parametri da passare in base ai filtri
+     *
+     * @param eventFilter can be null
+     */
     public void getEventsFromServer(final String eventFilter) {
         if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
             ApiCallSingleton.getInstance().setConnectionOpen();
@@ -258,7 +263,9 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    //chiamata solo per eventi passati
+    /**
+     * Carica gli eventi passati
+     */
     public void loadOldEvents() {
         //controllo se c'è già una connessione attiva
         if (!ApiCallSingleton.getInstance().isConnectionOpen() && showOldEvents) {
@@ -277,8 +284,9 @@ public class HomeActivity extends AppCompatActivity
                                 if (response != null) {
                                     Log.i(TAG, "onSuccess: loadOldEvents()");
                                     final List<BlogEvent> newItems = JSONParser.getInstance().parseJsonResponse(response);
-                                    if (newItems.size() > 0) {    //controllo se l'array nuovo è vuoto
-                                        cardsAdapter.addEvents(newItems);   //aggiungo gli eventi trovati alla lista già presente
+                                    if (newItems.size() > 0) {    // controllo se l'array nuovo è vuoto
+                                        cardsAdapter.addEvents(newItems);   // aggiungo gli eventi trovati alla lista già presente
+                                        database.saveEvents(newItems);      // salvo nel database i vecchi eventi
                                         offset += newItems.size();
                                         Log.i("blogEventList more", "" + blogEventList.size());
                                         Log.i("more events", "" + newItems.size());
@@ -290,12 +298,12 @@ public class HomeActivity extends AppCompatActivity
                                             }
                                         });
                                     } else {
-                                        Log.i("snackbar: ", "newItems = 0 in loadMore");
+                                        Log.i("snackbar: ", "newItems = 0 in loadOldEvents");
                                         snackNoNewEvents.show();
                                     }
                                 }
                             } catch (JSONException e) {
-                                Log.i("snackbar: ", "JSONException in loadMore()");
+                                Log.i("snackbar: ", "JSONException in loadOldEvents()");
                                 snackNoNewEvents.show();
                                 e.printStackTrace();
                             } catch (Exception e) {

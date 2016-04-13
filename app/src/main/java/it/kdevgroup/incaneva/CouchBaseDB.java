@@ -19,7 +19,9 @@ import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,18 +32,19 @@ public class CouchBaseDB {
     private static final String TAG = "CouchBaseDB";
     private static final String KEY_TYPE = "type";
     private static final String VALUE_TYPE = BlogEvent.class.getSimpleName();
-    private static final String VIEW_BLOG_EVENT = BlogEvent.class.getSimpleName() + "View";
+    private static final String VIEW_NEW_EVENTS = "NewEventsView";
+    private static final String VIEW_OLD_EVENTS = "OldEventsView";
+    private static final String DB_NAME = "incaneva";
 
     public Manager man;
     public Database db;
     public Context cntx;
 
-    public final String dbname = "incaneva";
 
     public CouchBaseDB(Context c) {
         cntx = c;
         createManager();
-        createViewForBlogEvents();
+        createViewForNewBlogEvents();
     }
 
     /**
@@ -55,15 +58,15 @@ public class CouchBaseDB {
             Log.d("Eccezione DB", "Impossibile creare l'oggetto Manager");
             e.printStackTrace();
         }
-        if (!Manager.isValidDatabaseName(dbname)) {
+        if (!Manager.isValidDatabaseName(DB_NAME)) {
             Log.d(" controllo nome db ", "Nome del Database errato");
 
         } else {
             try {
                 DatabaseOptions options = new DatabaseOptions();
                 options.setCreate(true);
-                db = man.getDatabase(dbname);
-                //db = man.openDatabase(dbname, options);
+                db = man.getDatabase(DB_NAME);
+                //db = man.openDatabase(DB_NAME, options);
                 Log.d("DB costr", "Database creato\n");
 
 
@@ -77,9 +80,50 @@ public class CouchBaseDB {
     /**
      * Crea la View che, tramite una query con la sua map function,
      * servirà ad ottenere i dati di tipo BlogEvent salvati nel DB
+     * con data futura rispetto ad oggi.
      */
-    private void createViewForBlogEvents() {
-        View view = db.getView(VIEW_BLOG_EVENT);
+    private void createViewForNewBlogEvents() {
+        View view = db.getView(VIEW_NEW_EVENTS);
+        view.setMap(new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                Object obj = document.get(KEY_TYPE);
+
+                // se ho un valore corrispondente alla chiave "type", allora ho un BlogEvent
+                if (obj != null && obj.equals(VALUE_TYPE)) {
+
+                   /* TODO: controllo sulla data per caricare dal DB eventi futuri
+                   Object abstractDate = document.get(BlogEvent.KEY_evcal_erow);
+                    Date date = null;
+
+                    if (abstractDate instanceof Long)
+                        date = new Date((Long) abstractDate);
+                    else if (abstractDate instanceof Integer)
+                        date = new Date((Integer) abstractDate);
+
+                    // se la data esiste e viene dopo oggi, incluso oggi
+                    if (date != null && date.after(new Date())) {
+                        BlogEvent event = new BlogEvent(document);
+                        emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id)); // salvo id
+                        emitter.emit(VALUE_TYPE, event);                                // salvo BlogEvent
+                    }*/
+
+                    BlogEvent event = new BlogEvent(document);
+                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id)); // salvo id
+                    emitter.emit(VALUE_TYPE, event);                                // salvo BlogEvent
+                }
+            }
+
+        }, "1");
+    }
+
+    /**
+     * Crea la View che, tramite una query con la sua map function,
+     * servirà ad ottenere i dati di tipo BlogEvent salvati nel DB
+     * con data passata rispetto ad oggi.
+     */
+    private void createViewForOldBlogEvents() {
+        View view = db.getView(VIEW_OLD_EVENTS);
         view.setMap(new Mapper() {
             @Override
             public void map(Map<String, Object> document, Emitter emitter) {
@@ -132,7 +176,7 @@ public class CouchBaseDB {
      * @param blogEventList lista di eventi
      * @throws CouchbaseLiteException
      */
-    public void saveEvents(ArrayList<BlogEvent> blogEventList) throws CouchbaseLiteException {
+    public void saveEvents(List<BlogEvent> blogEventList) throws CouchbaseLiteException {
         for (BlogEvent blogEvent : blogEventList) {
             // ottengo il documento con l'id passato, null se non esiste
             Document document = db.getExistingDocument(String.valueOf(blogEvent.getID()));
@@ -207,7 +251,7 @@ public class CouchBaseDB {
      * @throws CouchbaseLiteException
      */
     private Map<String, Object> getAllBlogEventDocs() throws CouchbaseLiteException {
-        View view = db.getView(VIEW_BLOG_EVENT);
+        View view = db.getView(VIEW_NEW_EVENTS);
         Query query = view.createQuery();
         query.setMapOnly(true);
         QueryEnumerator result = query.run();
