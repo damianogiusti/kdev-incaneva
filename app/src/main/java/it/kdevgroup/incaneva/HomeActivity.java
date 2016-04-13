@@ -6,16 +6,16 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -30,24 +30,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseOptions;
-import com.couchbase.lite.Document;
-import com.couchbase.lite.Manager;
-import com.couchbase.lite.android.AndroidContext;
-import com.couchbase.lite.auth.Authenticator;
-import com.couchbase.lite.auth.AuthenticatorFactory;
-import com.couchbase.lite.replicator.Replication;
-
-import java.io.IOException;
-
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -130,8 +112,8 @@ public class HomeActivity extends AppCompatActivity
          */
         cardsAdapter = new EventsCardsAdapter(blogEventList, this, currentCategory);   //adapter personalizzato che accetta la lista di eventi, context dell'app e filtro per la categoria
         recyclerView.setAdapter(cardsAdapter);                  //l'adapter gestirà le CardView da inserire nel recycler view
-        database = new CouchBaseDB(this);
-        database.createMan();
+        database = new CouchBaseDB(getApplicationContext());
+        //database.createMan();
         database.saveEvents(blogEventList);
         // --- LAYOUT MANAGER
         /*
@@ -171,13 +153,13 @@ public class HomeActivity extends AppCompatActivity
         });
 
         // --- CONTROLLO CONNESSIONE DATI E CHIAMATA INIZIALE API
-            if (!isNetworkAvailable()) {
-                snackInternetMissing.show();
-            } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-                getEventsFromServer(null);
-            } else if (blogEventList.size() > 0) {
-                showFilteredEvents(blogEventList, currentCategory);
-            }
+        if (!isNetworkAvailable()) {
+            snackInternetMissing.show();
+        } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
+            getEventsFromServer(null);
+        } else if (blogEventList.size() > 0) {
+            showFilteredEvents(blogEventList, currentCategory);
+        }
 
         // --- INZIALIZZAZIONE NAVIGATION DRAWER
 
@@ -325,7 +307,7 @@ public class HomeActivity extends AppCompatActivity
                     }
             );
         }
-        if(cardsAdapter.getItemCount() == 0){
+        if (cardsAdapter.getItemCount() == 0) {
             snackNoNewEvents.show();
         }
     }
@@ -342,16 +324,16 @@ public class HomeActivity extends AppCompatActivity
         recyclerView.swapAdapter(cardsAdapter, false);
     }
 
-    public void updateOffset(ArrayList<BlogEvent> eventsList){
+    public void updateOffset(ArrayList<BlogEvent> eventsList) {
         Date today = new Date();
         Date eventStartDate;
-        Log.i("offset prima: ",""+offset);
+        Log.i("offset prima: ", "" + offset);
         for (BlogEvent event : eventsList) {
             eventStartDate = new Date(event.getStartTime() * 1000);
             if (!eventStartDate.before(today))
                 offset++;
         }
-        Log.i("offset dopo: ",""+offset);
+        Log.i("offset dopo: ", "" + offset);
     }
 
     @Override

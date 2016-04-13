@@ -1,35 +1,7 @@
 package it.kdevgroup.incaneva;
 
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
-
-import com.loopj.android.http.AsyncHttpResponseHandler;
-
-import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -37,20 +9,11 @@ import com.couchbase.lite.DatabaseOptions;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Manager;
 import com.couchbase.lite.android.AndroidContext;
-import com.couchbase.lite.auth.Authenticator;
-import com.couchbase.lite.auth.AuthenticatorFactory;
-import com.couchbase.lite.replicator.Replication;
 
 import java.io.IOException;
-
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by adamo on 12/04/2016.
@@ -64,35 +27,38 @@ public class CouchBaseDB {
     public final String dbname = "incaneva";
 
     public CouchBaseDB(Context c) {
-
-
         cntx = c;
+        createMan();
     }
 
-    public void createMan(){
+    /**
+     * Crea il database manager
+     */
+    public void createMan() {
         try {
-            man = new Manager((com.couchbase.lite.Context) cntx, Manager.DEFAULT_OPTIONS);
+            man = new Manager(new AndroidContext(cntx), Manager.DEFAULT_OPTIONS);
             Log.d("MAN Costruttore", "Manager Creato\n");
         } catch (IOException e) {
-            Log.d("Eccezione DB","Impossibile creare l'oggetto Manager");
+            Log.d("Eccezione DB", "Impossibile creare l'oggetto Manager");
+            e.printStackTrace();
             return;
         }
         if (!Manager.isValidDatabaseName(dbname)) {
-            Log.d(" controllo nome db ","Nome del Database errato");
+            Log.d(" controllo nome db ", "Nome del Database errato");
             return;
         }
 
         try {
             DatabaseOptions options = new DatabaseOptions();
             options.setCreate(true);
-            db = man.openDatabase(dbname, options);
+            db=man.getDatabase(dbname);
+            //db = man.openDatabase(dbname, options);
 
-            Log.d("DB costr","Database creato\n");
+            Log.d("DB costr", "Database creato\n");
 
 
-
-        } catch (CouchbaseLiteException e){
-            Log.d("ECCEZIONE","Impossibile accedere al database\n");
+        } catch (CouchbaseLiteException e) {
+            Log.d("ECCEZIONE", "Impossibile accedere al database\n");
 
             return;
         }
