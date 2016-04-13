@@ -79,7 +79,7 @@ public class ApiCallSingleton {
             requestParams.add(filter, filterValue);
         }
 
-        Log.i("url: ",requestParams.toString());
+        Log.i("url: ", requestParams.toString());
         AsyncHttpClient client = new AsyncHttpClient();
         client.post(API_URL, requestParams, handler);
     }
@@ -92,7 +92,7 @@ public class ApiCallSingleton {
      * @throws Exception
      */
     public String validateResponse(String response) throws Exception {
-        if(response.length() > 0) {     //se il limit è impostato troppo alto la risposta è completamente vuota e lancia un'eccezione poi sull'object/parser
+        if (response.length() > 0) {     // se il limit è impostato troppo alto la risposta è completamente vuota e lancia un'eccezione poi sull'object/parser
             JSONObject object = new JSONObject(response);
             boolean success = object.getBoolean("success");
             if (success) {
@@ -112,7 +112,8 @@ public class ApiCallSingleton {
     public void setConnectionOpen() {
         connectionOpen = true;
     }
-    public void setConnectionClosed(){
+
+    public void setConnectionClosed() {
         connectionOpen = false;
     }
 

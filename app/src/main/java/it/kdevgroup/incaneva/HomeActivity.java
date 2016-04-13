@@ -159,15 +159,15 @@ public class HomeActivity extends AppCompatActivity
         if (!isNetworkAvailable()) {
             snackInternetMissing.show();
         } else if (blogEventList.size() == 0) {    // se non ho recuperato i dati dal bundle (o in futuro da database)
-            //if (database.isDatabaseEmpty())
+            if (database.isDatabaseEmpty())
                 getEventsFromServer(null);
-            /*else {
+            else {
                 try {
                     blogEventList = database.loadEvents();
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();
                 }
-            }*/
+            }
         } else if (blogEventList.size() > 0) {
             showFilteredEvents(blogEventList, currentCategory);
         }
@@ -192,7 +192,7 @@ public class HomeActivity extends AppCompatActivity
         if (!ApiCallSingleton.getInstance().isConnectionOpen()) {
             ApiCallSingleton.getInstance().setConnectionOpen();
             offset = 0;
-            // ESEMPIO DI CHIAMATA
+
             // settato parametro old a false per ottenere un layout dell'app simile alla pagina
             // http://incaneva.it/blog/category/eventi/ e aggirare il fatto che le chiamate al php
             // ritornino l'evento più recente per primo
@@ -205,12 +205,13 @@ public class HomeActivity extends AppCompatActivity
                                     Log.i(TAG, "onSuccess: getEventsFromServer");
                                     blogEventList = JSONParser.getInstance().parseJsonResponse(response);
 
-                                    if (blogEventList.size() > 0) {              //controllo se la lista è vuota per evitare calcoli inutili
+                                    if (blogEventList.size() > 0) {              // controllo se la lista è vuota per evitare calcoli inutili
 
-                                        Collections.reverse(blogEventList); //lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
+                                        Collections.reverse(blogEventList); // lista di nuovi eventi invertita per averli in ordine dal più vicino al più lontano
 
                                         database.saveEvents(blogEventList);
-                                        updateOffset(blogEventList);    //calcolo l'offset con la nuova lista
+
+                                        updateOffset(blogEventList);        // calcolo l'offset con la nuova lista
 
                                         Log.i("NUOVA LISTA DA FILTRO", "scaricati eventi");
                                     }

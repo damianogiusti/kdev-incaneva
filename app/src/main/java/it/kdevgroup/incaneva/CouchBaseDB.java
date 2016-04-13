@@ -1,7 +1,7 @@
 package it.kdevgroup.incaneva;
 
 import android.content.Context;
-import android.text.Spanned;
+import android.text.Html;
 import android.util.Log;
 
 import com.couchbase.lite.CouchbaseLiteException;
@@ -13,19 +13,13 @@ import com.couchbase.lite.Manager;
 import com.couchbase.lite.Mapper;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryEnumerator;
-import com.couchbase.lite.QueryOptions;
 import com.couchbase.lite.QueryRow;
 import com.couchbase.lite.View;
 import com.couchbase.lite.android.AndroidContext;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,7 +29,8 @@ public class CouchBaseDB {
 
     private static final String TAG = "CouchBaseDB";
     private static final String KEY_TYPE = "type";
-    private static final String VALUE_TYPE = BlogEvent.class.getName();
+    private static final String VALUE_TYPE = BlogEvent.class.getSimpleName();
+    private static final String VIEW_BLOG_EVENT = BlogEvent.class.getSimpleName() + "View";
 
     public Manager man;
     public Database db;
@@ -46,12 +41,13 @@ public class CouchBaseDB {
     public CouchBaseDB(Context c) {
         cntx = c;
         createManager();
+        createViewForBlogEvents();
     }
 
     /**
      * Crea il database manager
      */
-    public void createManager() {
+    private void createManager() {
         try {
             man = new Manager(new AndroidContext(cntx), Manager.DEFAULT_OPTIONS);
             Log.d("MAN Costruttore", "Manager Creato\n");
@@ -76,7 +72,42 @@ public class CouchBaseDB {
                 e.printStackTrace();
             }
         }
+    }
 
+    /**
+     * Crea la View che, tramite una query con la sua map function,
+     * servirà ad ottenere i dati di tipo BlogEvent salvati nel DB
+     */
+    private void createViewForBlogEvents() {
+        View view = db.getView(VIEW_BLOG_EVENT);
+        view.setMap(new Mapper() {
+            @Override
+            public void map(Map<String, Object> document, Emitter emitter) {
+                Object obj = document.get(KEY_TYPE);
+                if (obj != null && obj.equals(VALUE_TYPE)) {
+                    BlogEvent event = new BlogEvent(document);
+
+                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id));
+                    emitter.emit(VALUE_TYPE, event);
+/*
+                    emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id));
+                    emitter.emit(BlogEvent.KEY_blogname, document.get(BlogEvent.KEY_blogname));
+                    emitter.emit(BlogEvent.KEY_blogname_slug, document.get(BlogEvent.KEY_blogname_slug));
+                    emitter.emit(BlogEvent.KEY_category_link, document.get(BlogEvent.KEY_category_link));
+                    emitter.emit(BlogEvent.KEY_category_name, document.get(BlogEvent.KEY_category_name));
+                    emitter.emit(BlogEvent.KEY_event_type, document.get(BlogEvent.KEY_event_type));
+                    emitter.emit(BlogEvent.KEY_post_content, document.get(BlogEvent.KEY_post_content));
+                    emitter.emit(BlogEvent.KEY_evcal_event_color, document.get(BlogEvent.KEY_evcal_event_color));
+                    emitter.emit(BlogEvent.KEY_evcal_start_time_min, document.get(BlogEvent.KEY_evcal_start_time_min));
+                    emitter.emit(BlogEvent.KEY_evcal_srow, document.get(BlogEvent.KEY_evcal_srow));
+                    emitter.emit(BlogEvent.KEY_evcal_erow, document.get(BlogEvent.KEY_evcal_erow));
+                    emitter.emit(BlogEvent.KEY_evcal_week_day, document.get(BlogEvent.KEY_evcal_week_day));
+                    emitter.emit(BlogEvent.KEY_post_day_numerical, document.get(BlogEvent.KEY_post_day_numerical));
+                    emitter.emit(BlogEvent.KEY_post_month_numerical, document.get(BlogEvent.KEY_post_month_numerical));
+                    emitter.emit(BlogEvent.KEY_post_time_hour, document.get(BlogEvent.KEY_post_time_hour));*/
+                }
+            }
+        }, "1");
     }
 
     /**
@@ -88,6 +119,8 @@ public class CouchBaseDB {
      */
     private void saveEvent(BlogEvent b, Document document) throws CouchbaseLiteException {
         Map<String, Object> docContent = new HashMap<>();
+        if (document.getProperties() != null)
+            docContent.putAll(document.getProperties());
 
         docContent.put(KEY_TYPE, VALUE_TYPE);
         docContent.put(BlogEvent.KEY_id, b.getID());
@@ -96,7 +129,7 @@ public class CouchBaseDB {
         docContent.put(BlogEvent.KEY_category_link, b.getCategoryLink());
         docContent.put(BlogEvent.KEY_category_name, b.getCategoryName());
         docContent.put(BlogEvent.KEY_event_type, b.getEventType());
-        docContent.put(BlogEvent.KEY_post_content, b.getPostContent());
+        docContent.put(BlogEvent.KEY_post_content, Html.toHtml(b.getPostContent()));
         docContent.put(BlogEvent.KEY_evcal_event_color, b.getEventColor());
         docContent.put(BlogEvent.KEY_evcal_start_time_min, b.getStartTime());
         docContent.put(BlogEvent.KEY_evcal_srow, b.getStartTime());
@@ -110,47 +143,16 @@ public class CouchBaseDB {
     }
 
     /**
-     * @param blogE
+     * Salva una lista di BlogEvent nel database
+     *
+     * @param blogEventList lista di eventi
      * @throws CouchbaseLiteException
      */
-    public void saveEvents(ArrayList<BlogEvent> blogE) throws CouchbaseLiteException {
-        for (BlogEvent blogEvent : blogE) {
+    public void saveEvents(ArrayList<BlogEvent> blogEventList) throws CouchbaseLiteException {
+        for (BlogEvent blogEvent : blogEventList) {
             // ottengo il documento con l'id passato, null se non esiste
             Document document = db.getExistingDocument(String.valueOf(blogEvent.getID()));
 
-            View view  = db.getView(BlogEvent.class.getName());
-            view.setMap(new Mapper() {
-                @Override
-                public void map(Map<String, Object> document, Emitter emitter) {
-                    Object obj = document.get(KEY_TYPE);
-                    if (obj != null && obj.equals(VALUE_TYPE)) {
-                        emitter.emit(BlogEvent.KEY_id, document.get(BlogEvent.KEY_id));
-                        emitter.emit(BlogEvent.KEY_blogname, document.get(BlogEvent.KEY_blogname));
-                        emitter.emit(BlogEvent.KEY_blogname_slug, document.get(BlogEvent.KEY_blogname_slug));
-                        emitter.emit(BlogEvent.KEY_category_link, document.get(BlogEvent.KEY_category_link));
-                        emitter.emit(BlogEvent.KEY_category_name, document.get(BlogEvent.KEY_category_name));
-                        emitter.emit(BlogEvent.KEY_event_type, document.get(BlogEvent.KEY_event_type));
-                        emitter.emit(BlogEvent.KEY_post_content, document.get(BlogEvent.KEY_post_content));
-                        emitter.emit(BlogEvent.KEY_evcal_event_color, document.get(BlogEvent.KEY_evcal_event_color));
-                        emitter.emit(BlogEvent.KEY_evcal_start_time_min, document.get(BlogEvent.KEY_evcal_start_time_min));
-                        emitter.emit(BlogEvent.KEY_evcal_srow, document.get(BlogEvent.KEY_evcal_srow));
-                        emitter.emit(BlogEvent.KEY_evcal_erow, document.get(BlogEvent.KEY_evcal_erow));
-                        emitter.emit(BlogEvent.KEY_evcal_week_day, document.get(BlogEvent.KEY_evcal_week_day));
-                        emitter.emit(BlogEvent.KEY_post_day_numerical, document.get(BlogEvent.KEY_post_day_numerical));
-                        emitter.emit(BlogEvent.KEY_post_month_numerical, document.get(BlogEvent.KEY_post_month_numerical));
-                        emitter.emit(BlogEvent.KEY_post_time_hour, document.get(BlogEvent.KEY_post_time_hour));
-                    }
-                }
-            }, "1");
-
-            Query query = view.createQuery();
-            query.setMapOnly(true);
-            QueryEnumerator result = query.run();
-
-            result.getCount();
-            for (QueryRow row : result) {
-                Map<String, Object> jrow = row.asJSONDictionary();
-            }
 
             // il documento esiste, valuto se sovrascriverlo
             if (document != null) {
@@ -178,32 +180,14 @@ public class CouchBaseDB {
      * @throws CouchbaseLiteException
      */
     public ArrayList<BlogEvent> loadEvents() throws CouchbaseLiteException {
-        Map<String, Object> tutto = db.getAllDocs(null);
-        ArrayList<BlogEvent> eventi = new ArrayList<>();
-        for (String id : tutto.keySet()) {
-            eventi.add(loadSingleEvent(id));/*
-            Document doc = (Document) tutto.get(id);
-            BlogEvent b = new BlogEvent();
-            b.setID((Integer) doc.getProperty(BlogEvent.KEY_id));
-            b.setBlogName((String) doc.getProperty(BlogEvent.KEY_blogname));
-            b.setBlogNameSlug((String) doc.getProperty(BlogEvent.KEY_blogname_slug));
-            b.setCategoryLink((String) doc.getProperty(BlogEvent.KEY_category_link));
-            b.setCategoryName((String) doc.getProperty(BlogEvent.KEY_category_name));
-            ArrayList<String> tmp = new ArrayList<>();
-            tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
-            b.setEventType(tmp);
-            b.setPostContent((Spanned) doc.getProperty(BlogEvent.KEY_post_content));
-            b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
-            b.setStartTime((Long) doc.getProperty(BlogEvent.KEY_evcal_start_time_min));
-            b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
-            b.setEventDay((String) doc.getProperty(BlogEvent.KEY_post_day_numerical));
-            b.setEventMonth((String) doc.getProperty(BlogEvent.KEY_post_month_numerical));
-            b.setEventMinute((String) doc.getProperty(BlogEvent.KEY_post_time_hour));
-            Log.d("loadEvents", "caricato evento con id" + doc.getProperty(BlogEvent.KEY_id));
-            eventi.add(b);*/
+        Map<String, Object> allDocuments = getAllBlogEventDocs();
+
+        ArrayList<BlogEvent> events = new ArrayList<>();
+        for (String id : allDocuments.keySet()) {
+            events.add(loadSingleEvent(id));
         }
 
-        return eventi;
+        return events;
 
     }
 
@@ -216,26 +200,11 @@ public class CouchBaseDB {
      */
     private BlogEvent loadSingleEvent(String id) throws CouchbaseLiteException {
 //        Map<String, Object> allDocs = db.getAllDocs(null);
+
         Document doc = db.getDocument(id);
-        BlogEvent b = new BlogEvent();
-        b.setID((Integer) doc.getProperty(BlogEvent.KEY_id));
-        b.setBlogName((String) doc.getProperty(BlogEvent.KEY_blogname));
-        b.setBlogNameSlug((String) doc.getProperty(BlogEvent.KEY_blogname_slug));
-        b.setCategoryLink((String) doc.getProperty(BlogEvent.KEY_category_link));
-        b.setCategoryName((String) doc.getProperty(BlogEvent.KEY_category_name));
-        ArrayList<String> tmp = (ArrayList<String>) doc.getProperty(BlogEvent.KEY_event_type);
-        b.setEventType(tmp);
-        Object spanned = doc.getProperty(BlogEvent.KEY_post_content);
-        b.setPostContent((Spanned) doc.getProperty(BlogEvent.KEY_post_content));
-        b.setEventColor((String) doc.getProperty(BlogEvent.KEY_evcal_event_color));
-        b.setStartTime(Long.valueOf((String) doc.getProperty(BlogEvent.KEY_evcal_srow)));
-        b.setEndTime(Long.valueOf((String) doc.getProperty(BlogEvent.KEY_evcal_erow)));
-        b.setDayofWeek((String) doc.getProperty(BlogEvent.KEY_evcal_week_day));
-        b.setEventDay((String) doc.getProperty(BlogEvent.KEY_post_day_numerical));
-        b.setEventMonth((String) doc.getProperty(BlogEvent.KEY_post_month_numerical));
-        b.setEventMinute((String) doc.getProperty(BlogEvent.KEY_post_time_hour));
-        Log.d("loadEvents", "caricato evento con id" + doc.getProperty(BlogEvent.KEY_id));
-        return b;
+        BlogEvent blogEvent = new BlogEvent(doc.getProperties());
+        Log.d("loadEvents", "caricato evento con id = " + doc.getProperty(BlogEvent.KEY_id));
+        return blogEvent;
     }
 
     /**
@@ -245,6 +214,26 @@ public class CouchBaseDB {
      */
     public boolean isDatabaseEmpty() {
         return db.getDocumentCount() == 0;
+    }
+
+    /**
+     * Restituisce tutti i documenti contenti BlogEvent
+     *
+     * @return
+     * @throws CouchbaseLiteException
+     */
+    private Map<String, Object> getAllBlogEventDocs() throws CouchbaseLiteException {
+        View view = db.getView(VIEW_BLOG_EVENT);
+        Query query = view.createQuery();
+        query.setMapOnly(true);
+        QueryEnumerator result = query.run();
+
+        Map<String, Object> map = new HashMap<>();
+        for (QueryRow row : result) {
+            map.put(row.getDocumentId(), row.getValue());
+        }
+
+        return map;
     }
 }
 

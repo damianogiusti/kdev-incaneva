@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by andrea on 07/04/16.
@@ -97,6 +98,29 @@ public class BlogEvent implements Parcelable {
         this.eventYear = eventYear;
     }
 
+    /**
+     * Costruisce un BlogEvent da una mappa chiave valore.
+     * Utile per quando si va a prendere l'oggetto dal database NoSQL
+     * @param map mappa chiave valore delle proprietà
+     */
+    public BlogEvent(Map<String, Object> map) {
+        setID((Integer) map.get(BlogEvent.KEY_id));
+        setBlogName((String) map.get(BlogEvent.KEY_blogname));
+        setBlogNameSlug((String) map.get(BlogEvent.KEY_blogname_slug));
+        setCategoryLink((String) map.get(BlogEvent.KEY_category_link));
+        setCategoryName((String) map.get(BlogEvent.KEY_category_name));
+        ArrayList<String> tmp = (ArrayList<String>) map.get(BlogEvent.KEY_event_type);
+        setEventType(tmp);
+        Object spanned = map.get(BlogEvent.KEY_post_content);
+        setPostContent(Html.fromHtml((String) map.get(BlogEvent.KEY_post_content)));
+        setEventColor((String) map.get(BlogEvent.KEY_evcal_event_color));
+        setStartTime((int) map.get(BlogEvent.KEY_evcal_srow));
+        setEndTime((int) map.get(BlogEvent.KEY_evcal_erow));
+        setDayofWeek((String) map.get(BlogEvent.KEY_evcal_week_day));
+        setEventDay((String) map.get(BlogEvent.KEY_post_day_numerical));
+        setEventMonth((String) map.get(BlogEvent.KEY_post_month_numerical));
+        setEventMinute((String) map.get(BlogEvent.KEY_post_time_hour));
+    }
 
     //metodi di get
 
