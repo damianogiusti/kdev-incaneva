@@ -149,8 +149,8 @@ public class HomeActivity extends AppCompatActivity
                 }
                 swipeRefreshLayout.setEnabled(enableRefreshCircle);
 
-                // se è visualizzato l'ultimo elemento, chiamo il server
-                if ((layoutManager.findLastCompletelyVisibleItemPosition() == blogEventList.size() - 1 || recyclerView.getChildCount() == 0)) {
+                // se sono a più di metà della lista e sto scrollando verso il basso chiamo il server
+                if (((layoutManager.findLastCompletelyVisibleItemPosition() >= blogEventList.size() / 2 && dy > 0) || recyclerView.getChildCount() == 0)) {
                     loadOldEvents();
                 }
             }
@@ -290,6 +290,7 @@ public class HomeActivity extends AppCompatActivity
                                         offset += newItems.size();
                                         Log.i("blogEventList more", "" + blogEventList.size());
                                         Log.i("more events", "" + newItems.size());
+                                        /*
                                         recyclerView.post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -297,6 +298,7 @@ public class HomeActivity extends AppCompatActivity
                                                 recyclerView.smoothScrollToPosition(cardsAdapter.getItemCount() - newItems.size());
                                             }
                                         });
+                                        */
                                     } else {
                                         Log.i("snackbar: ", "newItems = 0 in loadOldEvents");
                                         snackNoNewEvents.show();

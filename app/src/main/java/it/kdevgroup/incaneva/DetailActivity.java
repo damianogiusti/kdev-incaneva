@@ -1,5 +1,6 @@
 package it.kdevgroup.incaneva;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,8 @@ public class DetailActivity extends AppCompatActivity {
 
     ImageView imgEvent;
     TextView txtTitle, txtContent, txtStartEnd;
+    FloatingActionButton sharingFAB;
+    BlogEvent event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,20 @@ public class DetailActivity extends AppCompatActivity {
         txtTitle = (TextView) findViewById(R.id.txtTitle);
         txtContent = (TextView) findViewById(R.id.txtContent);
         txtStartEnd = (TextView) findViewById(R.id.txtStartEnd);
+        sharingFAB = (FloatingActionButton) findViewById(R.id.sharingFab);
 
-        BlogEvent event = getIntent().getParcelableExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
+        sharingFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, event.getPostContent().toString());
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, "Invia a"));
+            }
+        });
+
+        event = getIntent().getParcelableExtra(HomeActivity.BUNDLE_KEY_FOR_ARRAY);
 
         if (event != null) {
             Picasso.with(getApplicationContext()).load(event.getImageLink()).fit().into(imgEvent);
