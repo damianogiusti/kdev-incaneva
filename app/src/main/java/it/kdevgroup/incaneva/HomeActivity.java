@@ -29,6 +29,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -168,6 +169,9 @@ public class HomeActivity extends AppCompatActivity
             } else {
                 try {
                     blogEventList = database.loadEvents();
+
+                    Collections.sort(blogEventList);
+
                     showFilteredEvents(blogEventList, currentCategory);
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();

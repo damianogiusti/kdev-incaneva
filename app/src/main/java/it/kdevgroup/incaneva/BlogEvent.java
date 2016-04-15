@@ -7,13 +7,14 @@ import android.text.Spanned;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Created by andrea on 07/04/16.
  */
-public class BlogEvent implements Parcelable {
+public class BlogEvent implements Parcelable, Comparable<BlogEvent> {
 
     private static final String TAG = "BlogEvent";
 
@@ -382,5 +383,10 @@ public class BlogEvent implements Parcelable {
                 this.endTime == event.getEndTime() &&
                 this.eventColor.equals(event.getEventColor())
                 ;
+    }
+
+    @Override
+    public int compareTo(BlogEvent another) {
+        return Math.round(another.getStartTime() * 1000 - getStartTime() * 1000);
     }
 }
